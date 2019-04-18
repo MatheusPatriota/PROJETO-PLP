@@ -62,10 +62,17 @@ int* resultadoFinal(int time1, int time2){
 int main() {
 
 	//array com cadastro dos times
-	string idTime[3];
-	idTime[0] = "Campinense";
-	idTime[1] = "Treze";
-	idTime[2] = "Botafogo";
+	string idTime[10];
+	idTime[0] = "Souza";
+	idTime[1] = "CSP";
+	idTime[2] = "Campinense";
+	idTime[3] = "Treze";
+	idTime[4] = "Botafogo";
+	idTime[5] = "Serrano";
+	idTime[6] = "Perillima";
+	idTime[7] = "Atletico-PB";
+	idTime[8] = "Esporte De Patos";
+	idTime[9] = "Nacional de Patos";
 
 
 
@@ -94,15 +101,15 @@ int main() {
 
 	//CSP:
 	//ataque
-	timesAtributos[0][0] = 64;//0 a 100
+	timesAtributos[1][0] = 64;//0 a 100
 	//defesa
-	timesAtributos[0][1] = 66;//0 a 100
+	timesAtributos[1][1] = 66;//0 a 100
 	//controle de jogo
-	timesAtributos[0][2] = 69;//0 a 100
+	timesAtributos[1][2] = 69;//0 a 100
 	//confian�a
-	timesAtributos[0][3] = 65;//100 a 0
+	timesAtributos[1][3] = 65;//100 a 0
 	//disposi��o fisica
-	timesAtributos[0][4] = 100;//100 a 0
+	timesAtributos[1][4] = 100;//100 a 0
 	//jogador1
 	//timesAtributos[0][5] = 4;//1 a 10
 	//jogador2
@@ -116,15 +123,15 @@ int main() {
 	
 	//Campinense:
 	//ataque
-	timesAtributos[0][0] = 77;//0 a 100
+	timesAtributos[2][0] = 77;//0 a 100
 	//defesa
-	timesAtributos[0][1] = 72;//0 a 100
+	timesAtributos[2][1] = 72;//0 a 100
 	//controle de jogo
-	timesAtributos[0][2] = 77;//0 a 100
+	timesAtributos[2][2] = 77;//0 a 100
 	//confian�a
-	timesAtributos[0][3] = 76;//100 a 0
+	timesAtributos[2][3] = 76;//100 a 0
 	//disposi��o fisica
-	timesAtributos[0][4] = 100;//100 a 0
+	timesAtributos[2][4] = 100;//100 a 0
 	//jogador1
 	//timesAtributos[0][5] = 4;//1 a 10
 	//jogador2
@@ -136,15 +143,15 @@ int main() {
 
 	//Treze:
 	//ataque
-	timesAtributos[1][0] = 73;//0 a 100
+	timesAtributos[3][0] = 73;//0 a 100
 	//defesa
-	timesAtributos[1][1] = 70;//0 a 100
+	timesAtributos[3][1] = 70;//0 a 100
 	//controle de jogo
-	timesAtributos[1][2] = 74;//0 a 100
+	timesAtributos[3][2] = 74;//0 a 100
 	//confian�a
-	timesAtributos[1][3] = 72;//100 a 0
+	timesAtributos[3][3] = 72;//100 a 0
 	//disposi��o fisica
-	timesAtributos[1][4] = 100;//100 a 0
+	timesAtributos[3][4] = 100;//100 a 0
 	// //jogador1
 	// timesAtributos[1][5] = 4;//1 a 10
 	// //jogador2
@@ -154,15 +161,15 @@ int main() {
 
 	//Botafogo:
 	//ataque
-	timesAtributos[2][0] = 80;//0 a 100
+	timesAtributos[4][0] = 80;//0 a 100
 	//defesa
-	timesAtributos[2][1] = 76;//0 a 100
+	timesAtributos[4][1] = 76;//0 a 100
 	//controle de jogo
-	timesAtributos[2][2] = 81;//0 a 100
+	timesAtributos[4][2] = 81;//0 a 100
 	//confian�a
-	timesAtributos[2][3] = 78;//100 a 0
+	timesAtributos[4][3] = 78;//100 a 0
 	//disposi��o fisica
-	timesAtributos[2][4] = 100;//100 a 0
+	timesAtributos[4][4] = 100;//100 a 0
 	// //jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
@@ -172,15 +179,15 @@ int main() {
 
 	//Serrano:
 	//ataque
-	timesAtributos[2][0] = 48;//0 a 100
+	timesAtributos[5][0] = 48;//0 a 100
 	//defesa
-	timesAtributos[2][1] = 54;//0 a 100
+	timesAtributos[5][1] = 54;//0 a 100
 	//controle de jogo
-	timesAtributos[2][2] = 56;//0 a 100
+	timesAtributos[5][2] = 56;//0 a 100
 	//confian�a
-	timesAtributos[2][3] = 52;//100 a 0
+	timesAtributos[5][3] = 52;//100 a 0
 	//disposi��o fisica
-	timesAtributos[2][4] = 100;//100 a 0
+	timesAtributos[5][4] = 100;//100 a 0
 	//jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
@@ -190,15 +197,15 @@ int main() {
 
 	//Perilima:
 	//ataque
-	timesAtributos[2][0] = 46;//0 a 100
+	timesAtributos[6][0] = 46;//0 a 100
 	//defesa
-	timesAtributos[2][1] = 58;//0 a 100
+	timesAtributos[6][1] = 58;//0 a 100
 	//controle de jogo
-	timesAtributos[2][2] = 59;//0 a 100
+	timesAtributos[6][2] = 59;//0 a 100
 	//confian�a
-	timesAtributos[2][3] = 46;//100 a 0
+	timesAtributos[6][3] = 46;//100 a 0
 	//disposi��o fisica
-	timesAtributos[2][4] = 100;//100 a 0
+	timesAtributos[6][4] = 100;//100 a 0
 	//jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
@@ -208,15 +215,15 @@ int main() {
 
 	//Atletico - PB:
 	//ataque
-	timesAtributos[2][0] = 58;//0 a 100
+	timesAtributos[7][0] = 58;//0 a 100
 	//defesa
-	timesAtributos[2][1] = 61;//0 a 100
+	timesAtributos[7][1] = 61;//0 a 100
 	//controle de jogo
-	timesAtributos[2][2] = 62;//0 a 100
+	timesAtributos[7][2] = 62;//0 a 100
 	//confian�a
-	timesAtributos[2][3] = 59;//100 a 0
+	timesAtributos[7][3] = 59;//100 a 0
 	//disposi��o fisica
-	timesAtributos[2][4] = 100;//100 a 0
+	timesAtributos[7][4] = 100;//100 a 0
 	//jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
@@ -227,15 +234,15 @@ int main() {
 
 	//Esporte de Patos:
 	//ataque
-	timesAtributos[2][0] = 57;//0 a 100
+	timesAtributos[8][0] = 57;//0 a 100
 	//defesa
-	timesAtributos[2][1] = 62;//0 a 100
+	timesAtributos[8][1] = 62;//0 a 100
 	//controle de jogo
-	timesAtributos[2][2] = 61;//0 a 100
+	timesAtributos[8][2] = 61;//0 a 100
 	//confian�a
-	timesAtributos[2][3] = 57;//100 a 0
+	timesAtributos[8][3] = 57;//100 a 0
 	//disposi��o fisica
-	timesAtributos[2][4] = 100;//100 a 0
+	timesAtributos[8][4] = 100;//100 a 0
 	//jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
@@ -246,15 +253,15 @@ int main() {
 
 	//Nacional de Patos:
 	//ataque
-	timesAtributos[2][0] = 59;//0 a 100
+	timesAtributos[9][0] = 59;//0 a 100
 	//defesa
-	timesAtributos[2][1] = 60;//0 a 100
+	timesAtributos[9][1] = 60;//0 a 100
 	//controle de jogo
-	timesAtributos[2][2] = 60;//0 a 100
+	timesAtributos[9][2] = 60;//0 a 100
 	//confian�a
-	timesAtributos[2][3] = 61;//100 a 0
+	timesAtributos[9][3] = 61;//100 a 0
 	//disposi��o fisica
-	timesAtributos[2][4] = 100;//100 a 0
+	timesAtributos[9][4] = 100;//100 a 0
 	//jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
