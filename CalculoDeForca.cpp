@@ -1,9 +1,3 @@
-/*
- * CalculoDeForca.cpp
- *
- *  Created on: 17 de abr de 2019
- *      Author: yuri
- */
 
 #include "CalculoDeForca.h"
 
@@ -33,29 +27,54 @@ int* resultadoFinal(int time1, int time2){
 
     srand((unsigned) time(NULL));
 
+
     //condi��o para caso um time seja 4 vezes superior ao outro, para que haja chances de acontecer zebras
 	if(time1 > 4 * time2){
-		time2 = time2 + (rand() % time1 - time2 + 30);
+		time2 = time2 + (rand()% (time1 - time2 + 30));
 	}if (time2 > 4 * time1){
-		time1 = time1 + (rand() % time2 - time1 + 30);
+		time1 = time1 + (rand()% (time2 - time1 + 30));
 	}
 
 
 	// reduz a for�a do time para uma casa decimal
 	int auxTime1 = (int) (time1 * 0.01);
-	int auxTime2 = (int) (time1 * 0.01);
+	int auxTime2 = (int) (time2 * 0.01);
+
 
 	//calcula os resultados
-	int random1 = (-auxTime1 + (rand() & auxTime1));
-	int random2 = (-auxTime2 + (rand() & auxTime2));
+	int random1 = ((-auxTime1) + (rand()% (auxTime1 * 2 -1)));
+	int random2 = ((-auxTime2)  + (rand()% (auxTime2 * 2 - 1)));
+
+
 	auxTime1 += random1;
 	auxTime2 += random2;
+
+
 
 
 	// aloca os resultados em um vetor para ser usado futuramente.
 	int *result = (int*)malloc(2*sizeof(int));
 	result[0] = auxTime1;
 	result[1] = auxTime2;
+    return result;
+}
+
+
+int* calculoDaAposta(int time1, int time2, double valor){
+    int aux1, aux2;
+
+
+    if (time1 > time2){
+        aux1 = valor - (time1 * 0.15);
+        aux2 = valor + (time2 *0.35);
+    }else{
+        aux1 = valor + (time1 *0.35);
+        aux2 = valor - (time2 *0.15);
+    }
+    int* result = (int*)malloc(2*sizeof(int));
+    result[0] = aux1;
+    result[1] = aux2;
+
     return result;
 }
 
@@ -69,7 +88,7 @@ int main() {
 	idTime[3] = "Treze";
 	idTime[4] = "Botafogo";
 	idTime[5] = "Serrano";
-	idTime[6] = "Perillima";
+	idTime[6] = "Perilima";
 	idTime[7] = "Atletico-PB";
 	idTime[8] = "Esporte De Patos";
 	idTime[9] = "Nacional de Patos";
@@ -77,7 +96,7 @@ int main() {
 
 
 	//Array com atributos dos times
-	int timesAtributos [10][5];
+	int timesAtributos [10][6];
 
 	//Souza:
 	//ataque
@@ -90,6 +109,8 @@ int main() {
 	timesAtributos[0][3] = 68;//100 a 0
 	//disposi��o fisica
 	timesAtributos[0][4] = 100;//100 a 0
+	//torcida
+	timesAtributos[0][5] = 80;
 	//jogador1
 	//timesAtributos[0][5] = 4;//1 a 10
 	//jogador2
@@ -110,6 +131,8 @@ int main() {
 	timesAtributos[1][3] = 65;//100 a 0
 	//disposi��o fisica
 	timesAtributos[1][4] = 100;//100 a 0
+	//torcida
+	timesAtributos[1][5] = 80;
 	//jogador1
 	//timesAtributos[0][5] = 4;//1 a 10
 	//jogador2
@@ -120,7 +143,7 @@ int main() {
 	//timesAtributos[0][8] = 5000;
 
 
-	
+
 	//Campinense:
 	//ataque
 	timesAtributos[2][0] = 77;//0 a 100
@@ -132,6 +155,8 @@ int main() {
 	timesAtributos[2][3] = 76;//100 a 0
 	//disposi��o fisica
 	timesAtributos[2][4] = 100;//100 a 0
+	//torcida
+	timesAtributos[2][5] = 80;
 	//jogador1
 	//timesAtributos[0][5] = 4;//1 a 10
 	//jogador2
@@ -152,6 +177,8 @@ int main() {
 	timesAtributos[3][3] = 72;//100 a 0
 	//disposi��o fisica
 	timesAtributos[3][4] = 100;//100 a 0
+	//torcida
+	timesAtributos[3][5] = 80;
 	// //jogador1
 	// timesAtributos[1][5] = 4;//1 a 10
 	// //jogador2
@@ -170,6 +197,8 @@ int main() {
 	timesAtributos[4][3] = 78;//100 a 0
 	//disposi��o fisica
 	timesAtributos[4][4] = 100;//100 a 0
+	//torcida
+	timesAtributos[4][5] = 80;
 	// //jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
@@ -181,13 +210,15 @@ int main() {
 	//ataque
 	timesAtributos[5][0] = 48;//0 a 100
 	//defesa
-	timesAtributos[5][1] = 54;//0 a 100
+	timesAtributos[5][1] = 50;//0 a 100
 	//controle de jogo
 	timesAtributos[5][2] = 56;//0 a 100
 	//confian�a
 	timesAtributos[5][3] = 52;//100 a 0
 	//disposi��o fisica
 	timesAtributos[5][4] = 100;//100 a 0
+	//torcida
+	timesAtributos[5][5] = 80;
 	//jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
@@ -199,13 +230,15 @@ int main() {
 	//ataque
 	timesAtributos[6][0] = 46;//0 a 100
 	//defesa
-	timesAtributos[6][1] = 58;//0 a 100
+	timesAtributos[6][1] = 50;//0 a 100
 	//controle de jogo
 	timesAtributos[6][2] = 59;//0 a 100
 	//confian�a
 	timesAtributos[6][3] = 46;//100 a 0
 	//disposi��o fisica
 	timesAtributos[6][4] = 100;//100 a 0
+	//torcida
+	timesAtributos[6][5] = 80;
 	//jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
@@ -224,6 +257,8 @@ int main() {
 	timesAtributos[7][3] = 59;//100 a 0
 	//disposi��o fisica
 	timesAtributos[7][4] = 100;//100 a 0
+	//torcida
+	timesAtributos[7][5] = 80;
 	//jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
@@ -243,6 +278,8 @@ int main() {
 	timesAtributos[8][3] = 57;//100 a 0
 	//disposi��o fisica
 	timesAtributos[8][4] = 100;//100 a 0
+	//torcida
+	timesAtributos[8][5] = 80;
 	//jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
@@ -262,6 +299,8 @@ int main() {
 	timesAtributos[9][3] = 61;//100 a 0
 	//disposi��o fisica
 	timesAtributos[9][4] = 100;//100 a 0
+	//torcida
+	timesAtributos[9][5] = 80;
 	//jogador1
 	// timesAtributos[2][5] = 4;//1 a 10
 	// //jogador2
@@ -271,21 +310,24 @@ int main() {
 
 
 	//for�a do campinense
-
 	int resultado1 = 0;
+
+	for(int i = 0; i < 5; i++){
+		resultado1 = resultado1 + timesAtributos[3][i];
+	}
+	int forcaTime1 = calculoDeForca(resultado1, timesAtributos[3][4], 0.7);
+
+
+	//força do treze
 	int resultado2 = 0;
 	for(int i = 0; i < 5; i++){
-		resultado1 = resultado1 + timesAtributos[0][i];
-	}
-
-	for(int i = 0; i < 5; i++){
-			resultado2 = resultado2 + timesAtributos[1][i];
+			resultado2 = resultado2 + timesAtributos[2][i];
 		}
+	int forcaTime2 = calculoDeForca(resultado2, timesAtributos[2][4], 0.3);
 
-	int aux1 = calculoDeForca(resultado1, 100, 0.7);
-	int aux2 = calculoDeForca(resultado2, 100, 0.3);
-
-	int* aux = resultadoFinal(aux1, aux2);
-	printf("%d %d", aux[0], aux[1]);
+	int* resultadoFinalPartida = resultadoFinal(forcaTime1, forcaTime2);
+	int* valorRecebidoApostas = calculoDaAposta(forcaTime1, forcaTime2, 500);
+	printf("Gols do time1: %d\nGols do time2: %d\n", resultadoFinalPartida[0], resultadoFinalPartida[1]);
+	printf("Valor ganho por apostar no time1: %d\nValor ganho por apostar no time2: %d\n", valorRecebidoApostas[0], valorRecebidoApostas[1]);
 
 }
