@@ -13,27 +13,27 @@ using namespace std;
 
 
 
-//Calculo da força de um time
+//Calculo da forï¿½a de um time
 int calculoDeForca(int somatorio, int torcida, float porcentagemDaTorcida){
 
-    // equivale a 70% da força do time
+    // equivale a 70% da forï¿½a do time
 	somatorio = (int) (somatorio * 0.7);
 
-	//a porcentagem da torcida é passada como parametro
+	//a porcentagem da torcida ï¿½ passada como parametro
 	torcida = torcida * porcentagemDaTorcida;
 
-	//retorna a força total do time
+	//retorna a forï¿½a total do time
 	return somatorio + torcida;
 }
 
 
-//Calcula a força de dois times, retornando um array no final, onde a posição 0 é o resultado do time 1 e
-//a posição 1 é o resultado do segundo time
+//Calcula a forï¿½a de dois times, retornando um array no final, onde a posiï¿½ï¿½o 0 ï¿½ o resultado do time 1 e
+//a posiï¿½ï¿½o 1 ï¿½ o resultado do segundo time
 int* resultadoFinal(int time1, int time2){
 
     srand((unsigned) time(NULL));
 
-    //condição para caso um time seja 4 vezes superior ao outro, para que haja chances de acontecer zebras
+    //condiï¿½ï¿½o para caso um time seja 4 vezes superior ao outro, para que haja chances de acontecer zebras
 	if(time1 > 4 * time2){
 		time2 = time2 + (rand() % time1 - time2 + 30);
 	}if (time2 > 4 * time1){
@@ -41,7 +41,7 @@ int* resultadoFinal(int time1, int time2){
 	}
 
 
-	// reduz a força do time para uma casa decimal
+	// reduz a forï¿½a do time para uma casa decimal
 	int auxTime1 = (int) (time1 * 0.01);
 	int auxTime2 = (int) (time1 * 0.01);
 
@@ -70,66 +70,200 @@ int main() {
 
 
 	//Array com atributos dos times
-	int timesAtributos [3][9];
+	int timesAtributos [10][5];
 
-	//Campinense:
+	//Souza:
 	//ataque
-	timesAtributos[0][0] = 60;//0 a 100
+	timesAtributos[0][0] = 63;//0 a 100
 	//defesa
 	timesAtributos[0][1] = 65;//0 a 100
 	//controle de jogo
-	timesAtributos[0][2] = 50;//0 a 100
-	//confiança
-	timesAtributos[0][3] = 60;//100 a 0
-	//disposição fisica
+	timesAtributos[0][2] = 65;//0 a 100
+	//confianï¿½a
+	timesAtributos[0][3] = 68;//100 a 0
+	//disposiï¿½ï¿½o fisica
 	timesAtributos[0][4] = 100;//100 a 0
 	//jogador1
-	timesAtributos[0][5] = 4;//1 a 10
+	//timesAtributos[0][5] = 4;//1 a 10
 	//jogador2
-	timesAtributos[0][6] = 5;//1 a 10
+	//timesAtributos[0][6] = 5;//1 a 10
 	//jogador3
-	timesAtributos[0][7] = 5;//1 a 10
+	//timesAtributos[0][7] = 5;//1 a 10
 	//Capital
-	timesAtributos[0][8] = 5000;
+	//timesAtributos[0][8] = 5000;
+
+	//CSP:
+	//ataque
+	timesAtributos[0][0] = 64;//0 a 100
+	//defesa
+	timesAtributos[0][1] = 66;//0 a 100
+	//controle de jogo
+	timesAtributos[0][2] = 69;//0 a 100
+	//confianï¿½a
+	timesAtributos[0][3] = 65;//100 a 0
+	//disposiï¿½ï¿½o fisica
+	timesAtributos[0][4] = 100;//100 a 0
+	//jogador1
+	//timesAtributos[0][5] = 4;//1 a 10
+	//jogador2
+	//timesAtributos[0][6] = 5;//1 a 10
+	//jogador3
+	//timesAtributos[0][7] = 5;//1 a 10
+	//Capital
+	//timesAtributos[0][8] = 5000;
+
+
+	
+	//Campinense:
+	//ataque
+	timesAtributos[0][0] = 77;//0 a 100
+	//defesa
+	timesAtributos[0][1] = 72;//0 a 100
+	//controle de jogo
+	timesAtributos[0][2] = 77;//0 a 100
+	//confianï¿½a
+	timesAtributos[0][3] = 76;//100 a 0
+	//disposiï¿½ï¿½o fisica
+	timesAtributos[0][4] = 100;//100 a 0
+	//jogador1
+	//timesAtributos[0][5] = 4;//1 a 10
+	//jogador2
+	//timesAtributos[0][6] = 5;//1 a 10
+	//jogador3
+	//timesAtributos[0][7] = 5;//1 a 10
+	//Capital
+	//timesAtributos[0][8] = 5000;
 
 	//Treze:
 	//ataque
-	timesAtributos[1][0] = 55;//0 a 100
+	timesAtributos[1][0] = 73;//0 a 100
 	//defesa
-	timesAtributos[1][1] = 40;//0 a 100
+	timesAtributos[1][1] = 70;//0 a 100
 	//controle de jogo
-	timesAtributos[1][2] = 50;//0 a 100
-	//confiança
-	timesAtributos[1][3] = 60;//100 a 0
-	//disposição fisica
+	timesAtributos[1][2] = 74;//0 a 100
+	//confianï¿½a
+	timesAtributos[1][3] = 72;//100 a 0
+	//disposiï¿½ï¿½o fisica
 	timesAtributos[1][4] = 100;//100 a 0
-	//jogador1
-	timesAtributos[1][5] = 4;//1 a 10
-	//jogador2
-	timesAtributos[1][6] = 5;//1 a 10
-	//jogador3
-	timesAtributos[1][7] = 5;//1 a 10
+	// //jogador1
+	// timesAtributos[1][5] = 4;//1 a 10
+	// //jogador2
+	// timesAtributos[1][6] = 5;//1 a 10
+	// //jogador3
+	// timesAtributos[1][7] = 5;//1 a 10
 
 	//Botafogo:
 	//ataque
-	timesAtributos[2][0] = 60;//0 a 100
+	timesAtributos[2][0] = 80;//0 a 100
 	//defesa
-	timesAtributos[2][1] = 65;//0 a 100
+	timesAtributos[2][1] = 76;//0 a 100
 	//controle de jogo
-	timesAtributos[2][2] = 50;//0 a 100
-	//confiança
-	timesAtributos[2][3] = 60;//100 a 0
-	//disposição fisica
+	timesAtributos[2][2] = 81;//0 a 100
+	//confianï¿½a
+	timesAtributos[2][3] = 78;//100 a 0
+	//disposiï¿½ï¿½o fisica
+	timesAtributos[2][4] = 100;//100 a 0
+	// //jogador1
+	// timesAtributos[2][5] = 4;//1 a 10
+	// //jogador2
+	// timesAtributos[2][6] = 5;//1 a 10
+	// //jogador3
+	// timesAtributos[2][7] = 5;//1 a 10
+
+	//Serrano:
+	//ataque
+	timesAtributos[2][0] = 48;//0 a 100
+	//defesa
+	timesAtributos[2][1] = 54;//0 a 100
+	//controle de jogo
+	timesAtributos[2][2] = 56;//0 a 100
+	//confianï¿½a
+	timesAtributos[2][3] = 52;//100 a 0
+	//disposiï¿½ï¿½o fisica
 	timesAtributos[2][4] = 100;//100 a 0
 	//jogador1
-	timesAtributos[2][5] = 4;//1 a 10
-	//jogador2
-	timesAtributos[2][6] = 5;//1 a 10
-	//jogador3
-	timesAtributos[2][7] = 5;//1 a 10
+	// timesAtributos[2][5] = 4;//1 a 10
+	// //jogador2
+	// timesAtributos[2][6] = 5;//1 a 10
+	// //jogador3
+	// timesAtributos[2][7] = 5;//1 a 10
+
+	//Perilima:
+	//ataque
+	timesAtributos[2][0] = 46;//0 a 100
+	//defesa
+	timesAtributos[2][1] = 58;//0 a 100
+	//controle de jogo
+	timesAtributos[2][2] = 59;//0 a 100
+	//confianï¿½a
+	timesAtributos[2][3] = 46;//100 a 0
+	//disposiï¿½ï¿½o fisica
+	timesAtributos[2][4] = 100;//100 a 0
+	//jogador1
+	// timesAtributos[2][5] = 4;//1 a 10
+	// //jogador2
+	// timesAtributos[2][6] = 5;//1 a 10
+	// //jogador3
+	// timesAtributos[2][7] = 5;//1 a 10
+
+	//Atletico - PB:
+	//ataque
+	timesAtributos[2][0] = 58;//0 a 100
+	//defesa
+	timesAtributos[2][1] = 61;//0 a 100
+	//controle de jogo
+	timesAtributos[2][2] = 62;//0 a 100
+	//confianï¿½a
+	timesAtributos[2][3] = 59;//100 a 0
+	//disposiï¿½ï¿½o fisica
+	timesAtributos[2][4] = 100;//100 a 0
+	//jogador1
+	// timesAtributos[2][5] = 4;//1 a 10
+	// //jogador2
+	// timesAtributos[2][6] = 5;//1 a 10
+	// //jogador3
+	// timesAtributos[2][7] = 5;//1 a 10
 
 
-	//força do campinense
+	//Esporte de Patos:
+	//ataque
+	timesAtributos[2][0] = 57;//0 a 100
+	//defesa
+	timesAtributos[2][1] = 62;//0 a 100
+	//controle de jogo
+	timesAtributos[2][2] = 61;//0 a 100
+	//confianï¿½a
+	timesAtributos[2][3] = 57;//100 a 0
+	//disposiï¿½ï¿½o fisica
+	timesAtributos[2][4] = 100;//100 a 0
+	//jogador1
+	// timesAtributos[2][5] = 4;//1 a 10
+	// //jogador2
+	// timesAtributos[2][6] = 5;//1 a 10
+	// //jogador3
+	// timesAtributos[2][7] = 5;//1 a 10
+
+
+	//Nacional de Patos:
+	//ataque
+	timesAtributos[2][0] = 59;//0 a 100
+	//defesa
+	timesAtributos[2][1] = 60;//0 a 100
+	//controle de jogo
+	timesAtributos[2][2] = 60;//0 a 100
+	//confianï¿½a
+	timesAtributos[2][3] = 61;//100 a 0
+	//disposiï¿½ï¿½o fisica
+	timesAtributos[2][4] = 100;//100 a 0
+	//jogador1
+	// timesAtributos[2][5] = 4;//1 a 10
+	// //jogador2
+	// timesAtributos[2][6] = 5;//1 a 10
+	// //jogador3
+	// timesAtributos[2][7] = 5;//1 a 10
+
+
+	//forï¿½a do campinense
 
 	int resultado1 = 0;
 	int resultado2 = 0;
