@@ -110,6 +110,9 @@ int* getMelhoresClassificados(char grupo){
 
 }
 
+
+
+
 void semiFinal(){
     vector<int> timesA = getClassificadosParaFinal(Grupo_A);
     vector<int> timesB = getClassificadosParaFinal(Grupo_B);
@@ -173,6 +176,16 @@ void finalCampeonato(){
 
     cout<<"Jogo 2(Time: " + Times[0][*dupla[1]] +  " joga em casa): " + Times[0][*dupla[0]] + " vs " + Times[0][*dupla[0]]<< endl ;
     resultado = partida(*dupla[0], *dupla[1],1);
+
+    if(*resultado[0] > *resultado[1]){
+
+    }else if(*resultado[0] < *resultado[1]){
+
+    }else{
+
+
+    }
+
 
 
 
