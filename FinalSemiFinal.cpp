@@ -192,6 +192,34 @@ void finalCampeonato(){
 }
 
 
+int* penaltis(int time1, int time2){
+    int maior = 150;
+    int menor = 0;
+    int nPenaltis = 0;
+
+    int chancesTime1 = timesAtributos[time1][0] +  timesAtributos[time1][0];
+    int chancesTime2 = timesAtributos[time2][0] +  timesAtributos[time2][0];
+    srand((unsigned)time(0)); //para gerar números aleatórios reais.
+
+    int pontos1 = 0;
+    int pontos2 = 0;
+
+    while(pontos1 == pontos2 || nPenaltis <= 10){
+        int aleatorio = rand()%(maior-menor+1) + menor;
+        menor ++;
+        maior --;
+        if(chancesTime1 >= aleatorio){
+            pontos1 ++;
+        }if(chancesTime2 >= aleatorio){
+            pontos2 ++;
+        }nPenaltis ++;
+
+    }
+
+
+}
+
+
 int* partida(int time1, int time2,int timeJogaEmCasa){
 ////Deve ser responsavel por fazer os jjogos, alterar os dados de pontos e exibir isso na tela.
     int resultado1 = 0;
