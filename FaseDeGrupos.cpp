@@ -27,7 +27,7 @@ string int_to_string(int num){
 }
 
 // Metodo que realiza o sorteio de cinco times para cada grupo e retorna o resultado do sorteio (string)
-string SorteiroFaseDeGrupos(string times[3][10], string grupoA[7][5], string grupoB[7][5]){
+string SorteiroFaseDeGrupos(string times[10][8], string grupoA[7][5], string grupoB[7][5]){
 
     string resul = "";
 
@@ -45,7 +45,7 @@ string SorteiroFaseDeGrupos(string times[3][10], string grupoA[7][5], string gru
         random_shuffle(indices.begin(), indices.end());
         int x = indices.back();
         indices.pop_back();
-        grupoA[0][cont1] = times[0][x];
+        grupoA[0][cont1] = times[x][0];
         resul += "- " + grupoA[0][cont1] + "\n";
         cont1++;
     }
@@ -57,7 +57,7 @@ string SorteiroFaseDeGrupos(string times[3][10], string grupoA[7][5], string gru
         random_shuffle(indices.begin(), indices.end());
         int x = indices.back();
         indices.pop_back();
-        grupoB[0][cont2] = times[0][x];
+        grupoB[0][cont2] = times[x][0];
         resul += "- " + grupoB[0][cont2] + "\n";
         cont2++;
     }
@@ -65,129 +65,157 @@ string SorteiroFaseDeGrupos(string times[3][10], string grupoA[7][5], string gru
     return resul;
 }
 
+string RealizaRodadasDaFaseDeGrupos(string times[10][8], string grupoA[7][5], string grupoB[7][5], int TimeX, int TimeY){
+     string aux = "";
+
+    // aqui ficaria a chamada do metodo que calcularia os gols de cada time para serem usados abaixo
+    int gols_time1 = rand() % 5;
+    int gols_time2 = rand() % 5;
+
+    if(gols_time1 > gols_time2){
+        aux += grupoA[0][TimeX] + " x " + grupoB[0][TimeY] + " : C" + "\n"; // Se o time de casa ganhou
+    }
+    else if(gols_time2 > gols_time1) {
+        aux += grupoA[0][TimeX] + " x " + grupoB[0][TimeY] + " : F" + "\n"; // Se o time de fora ganhou
+    }
+    else {
+        aux += grupoA[0][TimeX] + " x " + grupoB[0][TimeY] + " : E" + "\n"; // Se houver empate
+    }
+
+    if(gols_time1 > gols_time2){
+        // Atualizando dados do time1
+        grupoA[1][TimeX] = int_to_string(string_to_int(grupoA[1][TimeX]) + 3); // Pontos
+        grupoA[2][TimeX] = int_to_string(string_to_int(grupoA[2][TimeX]) + 1); // Partidas
+        grupoA[3][TimeX] = int_to_string(string_to_int(grupoA[3][TimeX]) + 1); // Vitorias
+        grupoA[6][TimeX] = int_to_string(string_to_int(grupoA[6][TimeX]) + gols_time1); // Gols
+
+        // Atualizando dados do time2
+        grupoB[2][TimeY] = int_to_string(string_to_int(grupoB[2][TimeY]) + 1); // Partidas
+        grupoB[5][TimeY] = int_to_string(string_to_int(grupoB[5][TimeY]) + 1); // Derrotas
+        grupoB[6][TimeY] = int_to_string(string_to_int(grupoB[6][TimeY]) + gols_time2); // Gols
+    }
+    else if(gols_time2 > gols_time1){
+        // Atualizando dados do time1
+        grupoB[1][TimeY] = int_to_string(string_to_int(grupoB[1][TimeY]) + 3); // Pontos
+        grupoB[2][TimeY] = int_to_string(string_to_int(grupoB[2][TimeY]) + 1); // Partidas
+        grupoB[3][TimeY] = int_to_string(string_to_int(grupoB[3][TimeY]) + 1); // Vitorias
+        grupoB[6][TimeY] = int_to_string(string_to_int(grupoB[6][TimeY]) + gols_time2); // Gols
+
+        // Atualizando dados do time2
+        grupoA[2][TimeX] = int_to_string(string_to_int(grupoA[2][TimeX]) + 1); // Partidas
+        grupoA[5][TimeX] = int_to_string(string_to_int(grupoA[5][TimeX]) + 1); // Derrotas
+        grupoA[6][TimeX] = int_to_string(string_to_int(grupoA[6][TimeX]) + gols_time1); // Gols
+    }
+    else {
+        // Atualizando dados do time1
+        grupoA[1][TimeX] = int_to_string(string_to_int(grupoA[1][TimeX]) + 1); // Pontos
+        grupoA[2][TimeX] = int_to_string(string_to_int(grupoA[2][TimeX]) + 1); // Partidas
+        grupoA[4][TimeX] = int_to_string(string_to_int(grupoA[4][TimeX]) + 1); // Empates
+        grupoA[6][TimeX] = int_to_string(string_to_int(grupoA[6][TimeX]) + gols_time1); // Gols
+
+        // Atualizando dados do time2
+        grupoB[1][TimeY] = int_to_string(string_to_int(grupoB[1][TimeY]) + 1); // Pontos
+        grupoB[2][TimeY] = int_to_string(string_to_int(grupoB[2][TimeY]) + 1); // Partidas
+        grupoB[4][TimeY] = int_to_string(string_to_int(grupoB[4][TimeY]) + 1); // Empates
+        grupoB[6][TimeY] = int_to_string(string_to_int(grupoB[6][TimeY]) + gols_time2); // Gols
+    }
+    return aux;
+}
+
 // O metodo esta recebendo os times para posteriormente alterar os atributos de cada time apos cada jogo (lembrano que falta atualizar)
 // os atributos dos times apos cada partida
-vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[7][10], string grupoA[7][5], string grupoB[7][5]){
+vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][8], string grupoA[7][5], string grupoB[7][5]){
 
     vector <string> JogosDeCadaTime;
+    string aux = "";
 
-    // Realizando jogos do grupoA
-    for(int i = 0; i < 5; i++){
-            string aux = "";
-        for(int j = 0; j < 5; j++){
-            // aqui ficaria a chamada do metodo que calcularia os gols de cada time para serem usados abaixo
-            int gols_time1 = rand() % 5;
-            int gols_time2 = rand() % 5;
+    // Ida
 
-            if(gols_time1 > gols_time2){
-                aux += grupoA[0][i] + " x " + grupoB[0][j] + " : C" + "\n"; // Se o time de casa ganhou
-            }
-            else if(gols_time2 > gols_time1) {
-                aux += grupoA[0][i] + " x " + grupoB[0][j] + " : F" + "\n"; // Se o time de fora ganhou
-            }
-            else {
-                aux += grupoA[0][i] + " x " + grupoB[0][j] + " : E" + "\n"; // Se houver empate
-            }
+    // Rodada 1
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 0, 0);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 1, 1);
+    aux += RealizaRodadasDaFaseDeGrupos( times, grupoA, grupoB, 2, 2);
+    aux += RealizaRodadasDaFaseDeGrupos( times, grupoA,  grupoB, 3, 3);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 4, 4);
+    JogosDeCadaTime.push_back(aux);
+    aux = "";
+    // Rodada 2
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 0, 1);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 1, 2);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 2, 3);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 3, 4);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 4, 0);
+    JogosDeCadaTime.push_back(aux);
+    aux = "";
+    // Rodada 3
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 0, 2);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 1, 3);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 2, 4);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 3, 0);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 4, 1);
+    JogosDeCadaTime.push_back(aux);
+    aux = "";
+    // Rodada 4
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 0, 3);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 1, 4);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 2, 0);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 3, 1);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 4, 2);
+    JogosDeCadaTime.push_back(aux);
+    aux = "";
+    // Rodada 5
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 0, 4);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 1, 0);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 2, 1);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 3, 2);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 4, 3);
+    JogosDeCadaTime.push_back(aux);
+    aux = "";
 
-            if(gols_time1 > gols_time2){
-                // Atualizando dados do time1
-                grupoA[1][i] = int_to_string(string_to_int(grupoA[1][i]) + 3); // Pontos
-                grupoA[2][i] = int_to_string(string_to_int(grupoA[2][i]) + 1); // Partidas
-                grupoA[3][i] = int_to_string(string_to_int(grupoA[3][i]) + 1); // Vitorias
-                grupoA[6][i] = int_to_string(string_to_int(grupoA[6][i]) + gols_time1); // Gols
+    // Volta
 
-                // Atualizando dados do time2
-                grupoB[2][j] = int_to_string(string_to_int(grupoB[2][j]) + 1); // Partidas
-                grupoB[5][j] = int_to_string(string_to_int(grupoB[5][j]) + 1); // Derrotas
-                grupoB[6][j] = int_to_string(string_to_int(grupoB[6][j]) + gols_time2); // Gols
-            }
-            else if(gols_time2 > gols_time1){
-                // Atualizando dados do time1
-                grupoB[1][j] = int_to_string(string_to_int(grupoB[1][j]) + 3); // Pontos
-                grupoB[2][j] = int_to_string(string_to_int(grupoB[2][j]) + 1); // Partidas
-                grupoB[3][j] = int_to_string(string_to_int(grupoB[3][j]) + 1); // Vitorias
-                grupoB[6][j] = int_to_string(string_to_int(grupoB[6][j]) + gols_time2); // Gols
+    // Rodada 6
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 0, 0);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 1, 1);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 2, 2);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 3, 3);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 4, 4);
+    JogosDeCadaTime.push_back(aux);
+    aux = "";
+    // Rodada 7
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 1, 0);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 2, 1);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 3, 2);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 4, 3);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 0, 4);
+    JogosDeCadaTime.push_back(aux);
+    aux = "";
+    // Rodada 8
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 2, 0);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 3, 1);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 4, 2);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 0, 3);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 1, 4);
+    JogosDeCadaTime.push_back(aux);
+    aux = "";
+    // Rodada 9
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 3, 0);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 4, 1);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 0, 2);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 1, 3);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 2, 4);
+    JogosDeCadaTime.push_back(aux);
+    aux = "";
 
-                // Atualizando dados do time2
-                grupoA[2][i] = int_to_string(string_to_int(grupoA[2][i]) + 1); // Partidas
-                grupoA[5][i] = int_to_string(string_to_int(grupoA[5][i]) + 1); // Derrotas
-                grupoA[6][i] = int_to_string(string_to_int(grupoA[6][i]) + gols_time1); // Gols
-            }
-            else {
-                // Atualizando dados do time1
-                grupoA[1][i] = int_to_string(string_to_int(grupoA[1][i]) + 1); // Pontos
-                grupoA[2][i] = int_to_string(string_to_int(grupoA[2][i]) + 1); // Partidas
-                grupoA[4][i] = int_to_string(string_to_int(grupoA[4][i]) + 1); // Empates
-                grupoA[6][i] = int_to_string(string_to_int(grupoA[6][i]) + gols_time1); // Gols
+    // Rodada 10
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 4, 0);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 0, 1);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 1, 2);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 2, 3);
+    aux += RealizaRodadasDaFaseDeGrupos( times,  grupoB,  grupoA, 3, 4);
+    JogosDeCadaTime.push_back(aux);
+    aux = "";
 
-                // Atualizando dados do time2
-                grupoB[1][j] = int_to_string(string_to_int(grupoB[1][j]) + 1); // Pontos
-                grupoB[2][j] = int_to_string(string_to_int(grupoB[2][j]) + 1); // Partidas
-                grupoB[4][j] = int_to_string(string_to_int(grupoB[4][j]) + 1); // Empates
-                grupoB[6][j] = int_to_string(string_to_int(grupoB[6][j]) + gols_time2); // Gols
-            }
-        }
-        JogosDeCadaTime.push_back(aux);
-    }
-
-    // Realizando jogos do grupoB
-    for(int i = 0; i < 5; i++){
-        string aux = "";
-        for(int j = 0; j < 5; j++){
-            // aqui ficaria a chamada do metodo que calcularia os gols de cada time para serem usados abaixo
-            int gols_time1 = rand() % 5;
-            int gols_time2 = rand() % 5;
-
-            if(gols_time1 > gols_time2){
-                aux += grupoB[0][i] + " x " + grupoA[0][j] + " : C" + "\n"; // Se o time de casa ganhou
-            }
-            else if(gols_time2 > gols_time1) {
-                aux += grupoB[0][i] + " x " + grupoA[0][j] + " : F" + "\n"; // Se o time de fora ganhou
-            }
-            else {
-                aux += grupoB[0][i] + " x " + grupoA[0][j] + " : E" + "\n"; // Se houve empate
-            }
-
-            if(gols_time1 > gols_time2){
-                // Atualizando dados do time1
-                grupoB[1][i] = int_to_string(string_to_int(grupoB[1][i]) + 3); // Pontos
-                grupoB[2][i] = int_to_string(string_to_int(grupoB[2][i]) + 1); // Partidas
-                grupoB[3][i] = int_to_string(string_to_int(grupoB[3][i]) + 1); // Vitorias
-                grupoB[6][i] = int_to_string(string_to_int(grupoB[6][i]) + gols_time1); // Gols
-
-                // Atualizando dados do time2
-                grupoA[2][j] = int_to_string(string_to_int(grupoA[2][j]) + 1); // Partidas
-                grupoA[5][j] = int_to_string(string_to_int(grupoA[5][j]) + 1); // Derrotas
-                grupoA[6][j] = int_to_string(string_to_int(grupoA[6][j]) + gols_time2); // Gols
-            }
-            else if(gols_time2 > gols_time1){
-                // Atualizando dados do time1
-                grupoA[1][j] = int_to_string(string_to_int(grupoA[1][j]) + 3); // Pontos
-                grupoA[2][j] = int_to_string(string_to_int(grupoA[2][j]) + 1); // Partidas
-                grupoA[3][j] = int_to_string(string_to_int(grupoA[3][j]) + 1); // Vitorias
-                grupoA[6][j] = int_to_string(string_to_int(grupoA[6][j]) + gols_time2); // Gols
-
-                // Atualizando dados do time2
-                grupoB[2][i] = int_to_string(string_to_int(grupoB[2][i]) + 1); // Partidas
-                grupoB[5][i] = int_to_string(string_to_int(grupoB[5][i]) + 1); // Derrotas
-                grupoB[6][i] = int_to_string(string_to_int(grupoB[6][i]) + gols_time1); // Gols
-            }
-            else {
-                // Atualizando dados do time1
-                grupoB[1][i] = int_to_string(string_to_int(grupoB[1][i]) + 1); // Pontos
-                grupoB[2][i] = int_to_string(string_to_int(grupoB[2][i]) + 1); // Partidas
-                grupoB[4][i] = int_to_string(string_to_int(grupoB[4][i]) + 1); // Empates
-                grupoB[6][i] = int_to_string(string_to_int(grupoB[6][i]) + gols_time1); // Gols
-
-                // Atualizando dados do time2
-                grupoA[1][j] = int_to_string(string_to_int(grupoA[1][j]) + 1); // Pontos
-                grupoA[2][j] = int_to_string(string_to_int(grupoA[2][j]) + 1); // Partidas
-                grupoA[4][j] = int_to_string(string_to_int(grupoA[4][j]) + 1); // Empates
-                grupoA[6][j] = int_to_string(string_to_int(grupoA[6][j]) + gols_time2); // Gols
-            }
-        }
-        JogosDeCadaTime.push_back(aux);
-    }
     return JogosDeCadaTime;
 }
 
@@ -307,9 +335,16 @@ int main()
     setlocale(LC_ALL,"");
 
     // Estrutura resuzida apenas para testes
-    string Times[3][10] = {{"Campinense","Treze","Botafogo","Souza","Nacional de Patos","Serrano","Atletico-PB","Perilima","Esporte de Patos","CSP" },   // Nome do time
-                           {"50"        ,"50"   ,"50"      ,"50"   ,"50"               ,"50"     ,"50"         ,"50"      ,"50"              ,"50"  },   // Ataque
-                           {"50"        ,"50"   ,"50"      ,"50"   ,"50"               ,"50"     ,"50"         ,"50"      ,"50"              ,"50"  }};  // Defesa
+    string Times[10][8] = {{"Campinense", "","","","","","",""},
+                           {"Treze", "","","","","","",""},
+                           {"Botafogo", "","","","","","",""},
+                           {"Souza", "","","","","","",""},
+                           {"Nacional de Patos", "","","","","","",""},
+                           {"Serrano", "","","","","","",""},
+                           {"Atletico-PB", "","","","","","",""},
+                           {"Perilima", "","","","","","",""},
+                           {"Esporte de Patos", "","","","","","",""},
+                           {"CSP", "","","","","","",""}};
 
 
     // 7 Linhas para o time e seus atributos e 2 linhas a quantidade de times
