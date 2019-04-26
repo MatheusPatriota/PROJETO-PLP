@@ -21,8 +21,9 @@ void finalCampeonato();
 
 int* partida(int time1, int time2,int timeJogaEmCasa);
 
-
-
+int* penaltis(int time1, int time2);
+int calculoDeForca(int somatorio, int torcida, float porcentagemDaTorcida);
+int* resultadoFinal(int time1, int time2);
 
 using namespace std;
 
@@ -208,7 +209,7 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[7][10], string grupo
     return JogosDeCadaTime;
 }
 
-// Metodo que retorna uma string com a situação atual de um grupo com os times ordenados corretamente de acordo com seus pontos
+// Metodo que retorna uma string com a situaÃ§Ã£o atual de um grupo com os times ordenados corretamente de acordo com seus pontos
 void OrdenaGrupoPelaQuantidadeDePontos(string grupo[7][5], int times[5]){
 
     string pontos[5] = {grupo[1][0], grupo[1][1], grupo[1][2], grupo[1][3], grupo[1][4]};
@@ -244,8 +245,8 @@ string getGrupoOrdenado(string grupo[7][5], string qual_grupo){
     int t[5] = {0,1,2,3,4};
     OrdenaGrupoPelaQuantidadeDePontos(grupo, t);
 
-    // Classificação , pontos, jogos, vitorias, empates, derrotas e gols;
-    string resul = "Classificação: Grupo "+ qual_grupo +"         Pontos      Jogos      Vitorias      Empates      Derrotas      Gols\n";
+    // ClassificaÃ§Ã£o , pontos, jogos, vitorias, empates, derrotas e gols;
+    string resul = "ClassificaÃ§Ã£o: Grupo "+ qual_grupo +"         Pontos      Jogos      Vitorias      Empates      Derrotas      Gols\n";
 
     for (int i = 0; i < 5; i++){
 
@@ -277,7 +278,7 @@ string getGrupoOrdenado(string grupo[7][5], string qual_grupo){
         }
         string gols = grupo[6][t[i]];
 
-        resul += int_to_string(i+1) + "º " + time + "         " + pontos + "          " + partidas + "          " + vitorias + "            " + empates + "           " + derrotas + "          " + gols + "\n";
+        resul += int_to_string(i+1) + "Âº " + time + "         " + pontos + "          " + partidas + "          " + vitorias + "            " + empates + "           " + derrotas + "          " + gols + "\n";
     }
 
     return resul;
@@ -315,8 +316,19 @@ vector<int> getClassificadosParaFinal(string grupo[7][5]){
 
     return classificados;
 }
+int somatorioDasForcas(string times[10][7], int idTime){
+    int resultado = 0;
+    for(int i = 1; i < 6; i++){
+		resultado += string_to_int(times[idTime][i]);
+		cout << resultado<< endl;
+	}
+	return resultado;
+}
 
 
+
+//Calcula a forï¿½a de dois times, retornando um array no final, onde a posiï¿½ï¿½o 0 ï¿½ o resultado do time 1 e
+//a posiï¿½ï¿½o 1 ï¿½ o resultado do segundo time
 
 
 #endif // FINALSEMIFINAL_H_INCLUDED
