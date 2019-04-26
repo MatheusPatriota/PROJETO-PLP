@@ -30,7 +30,7 @@ string int_to_string(int num){
 }
 
 // Metodo que realiza o sorteio de cinco times para cada grupo e retorna o resultado do sorteio (string)
-string SorteiroFaseDeGrupos(string times[10][8], string grupoA[7][5], string grupoB[7][5]){
+string SorteiroFaseDeGrupos(string times[10][7], string grupoA[7][5], string grupoB[7][5]){
 
     string resul = "";
 
@@ -68,7 +68,7 @@ string SorteiroFaseDeGrupos(string times[10][8], string grupoA[7][5], string gru
     return resul;
 }
 
-string RealizaRodadasDaFaseDeGrupos(string times[10][8], string grupoA[7][5], string grupoB[7][5], int TimeX, int TimeY){
+string RealizaRodadasDaFaseDeGrupos(string times[10][7], string grupoA[7][5], string grupoB[7][5], int TimeX, int TimeY){
      string aux = "";
 
     // aqui ficaria a chamada do metodo que calcularia os gols de cada time para serem usados abaixo
@@ -127,7 +127,7 @@ string RealizaRodadasDaFaseDeGrupos(string times[10][8], string grupoA[7][5], st
 
 // O metodo esta recebendo os times para posteriormente alterar os atributos de cada time apos cada jogo (lembrano que falta atualizar)
 // os atributos dos times apos cada partida
-vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][8], string grupoA[7][5], string grupoB[7][5]){
+vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupoA[7][5], string grupoB[7][5]){
 
     vector <string> JogosDeCadaTime;
     string aux = "";

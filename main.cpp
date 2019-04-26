@@ -1,4 +1,6 @@
 #include <iostream>
+#include <stdio.h>
+#include <unistd.h>
 #include "CalculoDeForca.hpp"
 #include "FaseDeGrupos.hpp"
 using namespace std;
@@ -7,16 +9,16 @@ using namespace std;
 int main() {
 
   // Estrutura resuzida apenas para testes
-    string Times[10][8] = {{"Campinense", "","","","","","",""},
-                           {"Treze", "","","","","","",""},
-                           {"Botafogo", "","","","","","",""},
-                           {"Souza", "","","","","","",""},
-                           {"Nacional de Patos", "","","","","","",""},
-                           {"Serrano", "","","","","","",""},
-                           {"Atletico-PB", "","","","","","",""},
-                           {"Perilima", "","","","","","",""},
-                           {"Esporte de Patos", "","","","","","",""},
-                           {"CSP", "","","","","","",""}};
+    string Times[10][7] = {{"Campinense", "77","72","77","76","100","80"},
+                           {"Treze", "73","70","74","72","100","80"},
+                           {"Botafogo", "80","76","81","78","100","80"},
+                           {"Souza", "63","65","65","68","100","80"},
+                           {"Nacional de Patos", "59","60","60","61","100","80"},
+                           {"Serrano", "48","50","56","52","100","80"},
+                           {"Atletico-PB", "58","61","62","59","100","80"},
+                           {"Perilima", "46","50","59","46","100","80"},
+                           {"Esporte de Patos", "57","62","61","57","100","80"},
+                           {"CSP", "64","66","69","65","100","80"}};
 
 
     // 7 Linhas para o time e seus atributos e 2 linhas a quantidade de times
@@ -38,15 +40,18 @@ int main() {
 
 
 	srand((unsigned)time(NULL));
-    setlocale(LC_ALL,"");
-
-  
+  setlocale(LC_ALL,"");
 
     string sorteio = SorteiroFaseDeGrupos(Times, Grupo_A, Grupo_B);
+
     vector<string> jogos = RealizandoOsJogosDaFaseDeGrupos(Times, Grupo_A, Grupo_B);
 
     cout << sorteio << endl;
-
+    // cout << sleep(5); 
+    int contador =5;
+    cout << sleep(5);
+    system("reset");
+    
     cout << "---------- Jogos Grupo A ----------" << endl;
     cout << "Rodada 01\n" + jogos[0] << "\n" << endl;
     cout << "Rodada 02\n" + jogos[1] << "\n" << endl;
