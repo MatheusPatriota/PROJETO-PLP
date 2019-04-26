@@ -37,8 +37,57 @@ int getIdTimeGrupo(string times[10][7], string time){
     }
     return id;
 
+}
+
+
+void transferencia(string times[10][7], string jogadores[25][4], int cont){
+    srand((unsigned)time(NULL));
+    int aux1 = rand() % cont-1;
+
+    for(int i = 0; i < 4; i++){
+        jogadores[aux1][i] = jogadores[cont][i];
+    }
+
+    int aux2 = rand() % (cont - 2);
+
+    int timeEscolhido = rand() % 10;
+    int timeEscolhido2 = rand() % 10;
+
+
+    cout<<"Mercado de Transferencia: \n"<<endl;
+
+    if (jogadores[aux1][1] == "A"){
+        times[timeEscolhido][1] = string_to_int(times[timeEscolhido][1]) + string_to_int(jogadores[aux1][2]);
+        cout<<"O Atacante " + jogadores[aux1][0] + " se transferiu para o " + times[timeEscolhido][0] + " numa transação de R$" + jogadores[aux1][3]<<endl;
+    }else if (jogadores[aux1][1] == "Z"){
+        times[timeEscolhido][2] = string_to_int(times[timeEscolhido][2]) + string_to_int(jogadores[aux1][2]);
+        cout<<"O Zagueiro " + jogadores[aux1][0] + " se transferiu para o " + times[timeEscolhido][0] + " numa transação de R$" + jogadores[aux1][3]<<endl;
+    }else if (jogadores[aux1][1] == "M"){
+        times[timeEscolhido][3] = string_to_int(times[timeEscolhido][3]) + string_to_int(jogadores[aux1][2]);
+        cout<<"O Meio-Campista " + jogadores[aux1][0] + " se transferiu para o " + times[timeEscolhido][0] + " numa transação de R$" + jogadores[aux1][3]<<endl;
+    }
+
+    for(int i = 0; i < 4; i++){
+        jogadores[aux1][i] = jogadores[cont][i];
+    }
+
+    if (jogadores[aux2][1] == "A"){
+        times[timeEscolhido2][1] = string_to_int(times[timeEscolhido2][1]) + string_to_int(jogadores[aux2][2]);
+        cout<<"O Atacante " + jogadores[aux2][0] + " se transferiu para o " + times[timeEscolhido2][0] + " numa transação de R$" + jogadores[aux2][3]<<endl;
+    }else if (jogadores[aux2][1] == "Z"){
+        times[timeEscolhido2][2] = string_to_int(times[timeEscolhido2][2]) + string_to_int(jogadores[aux2][2]);
+        cout<<"O Zagueiro " + jogadores[aux2][0] + " se transferiu para o " + times[timeEscolhido2][0] + " numa transação de R$" + jogadores[aux2][3]<<endl;
+    }else if (jogadores[2][1] == "M"){
+        times[timeEscolhido2][3] = string_to_int(times[timeEscolhido2][3]) + string_to_int(jogadores[aux2][2]);
+        cout<<"O Meio-Campista " + jogadores[aux2][0] + " se transferiu para o " + times[timeEscolhido2][0] + " numa transação de R$" + jogadores[aux2][3]<<endl;
+    }
+
+    for(int i = 0; i < 4; i++){
+        jogadores[aux2][i] = jogadores[cont-1][i];
+    }
 
 }
+
 
 // Metodo que retorna uma string com a situação atual de um grupo com os times ordenados corretamente de acordo com seus pontos
 void OrdenaGrupoPelaQuantidadeDePontos(string grupo[7][5], int times[5]){
@@ -250,7 +299,6 @@ int* simulaAposta(string times[10][7], string aux, string aux2,  string cont){
         cin>>nomeTime;
 
         id = getIdTimeGrupo(times, nomeTime);
-        cout<<id<<endl;
 
         if (id == -1){
             cout<<"Time Invalido"<<endl;
@@ -464,7 +512,7 @@ string RealizaRodadasDaFaseDeGrupos(string times[10][7], string grupoA[7][5], st
 
 // O metodo esta recebendo os times para posteriormente alterar os atributos de cada time apos cada jogo (lembrano que falta atualizar)
 // os atributos dos times apos cada partida
-vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupoA[7][5], string grupoB[7][5]){
+vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupoA[7][5], string grupoB[7][5], string jogadores[25][4]){
     int* aposta;
     int valorDaAposta = 2000;
 
@@ -476,6 +524,7 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
     // Ida
 
     // Rodada 1
+    transferencia(times, jogadores, 24);
     int valorDoJogo[10] = {0,0,0,0,0,0,0,0,0,0};
     int auxTimes[10] = {0,0,0,0,0,0,0,0,0,0};
     aux += RealizaRodadasDaFaseDeGrupos( times,  grupoA,  grupoB, 0, 0, getIdTimeGrupo(times, grupoA[0][0]), getIdTimeGrupo(times, grupoB[0][0]), auxTimes);
@@ -651,7 +700,14 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
     valorDoJogo2[getIdTimeGrupo(times, grupoB[0][1])] = aposta[1];
     aux3 += "Lucro por apostar no " + grupoA[0][4] + ": " + int_to_string(aposta[0]) + " -------  " + "Lucro por apostar no " + grupoB[0][1] + ": " + int_to_string(aposta[1]) + "\n";
 
-    simulacaoAposta = simulaAposta(times, aux2, aux3, "03");
+    if(valorDaAposta > 500 && valorDaAposta < 1000){
+        valorDaAposta = 1000;
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "03");
+    }else if(valorDaAposta > 1000){
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "03");
+    }else{
+        valorDaAposta = 1000;
+    }
 
     for(int i = 0; i < 2; i++){
         if( simulacaoAposta[i] != -1){
@@ -677,6 +733,7 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
 
 
     // Rodada 4
+    transferencia(times, jogadores, 24);
     aux = "";
     aux2 = "";
     aux3 = "";
@@ -717,7 +774,14 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
     valorDoJogo3[getIdTimeGrupo(times, grupoB[0][2])] = aposta[1];
     aux3 += "Lucro por apostar no " + grupoA[0][4] + ": " + int_to_string(aposta[0]) + " -------  " + "Lucro por apostar no " + grupoB[0][2] + ": " + int_to_string(aposta[1]) + "\n";
 
-    simulacaoAposta = simulaAposta(times, aux2, aux3, "04");
+    if(valorDaAposta > 500 && valorDaAposta < 1000){
+        valorDaAposta = 1000;
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "04");
+    }else if(valorDaAposta > 1000){
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "04");
+    }else{
+        valorDaAposta = 1000;
+    }
 
     for(int i = 0; i < 2; i++){
         if( simulacaoAposta[i] != -1){
@@ -744,6 +808,7 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
 
 
     // Rodada 5
+    transferencia(times, jogadores, 20);
 
     aux = "";
     aux2 = "";
@@ -786,7 +851,14 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
     valorDoJogo5[getIdTimeGrupo(times, grupoB[0][2])] = aposta[3];
     aux3 += "Lucro por apostar no " + grupoA[0][4] + ": " + int_to_string(aposta[0]) + " -------  " + "Lucro por apostar no " + grupoB[0][3] + ": " + int_to_string(aposta[1]) + "\n";
 
-    simulacaoAposta = simulaAposta(times, aux2, aux3, "05");
+    if(valorDaAposta > 500 && valorDaAposta < 1000){
+        valorDaAposta = 1000;
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "05");
+    }else if(valorDaAposta > 1000){
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "05");
+    }else{
+        valorDaAposta = 1000;
+    }
 
     for(int i = 0; i < 2; i++){
         if( simulacaoAposta[i] != -1){
@@ -811,6 +883,7 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
     cout<<"Saldo total do usuario depois dessa rodada: " + int_to_string(valorDaAposta) + "\n\n"<<endl;
 
     // Rodada 6
+    transferencia(times, jogadores, 18);
     aux = "";
     aux2 = "";
     aux3 = "";
@@ -853,7 +926,14 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
     aux3 += "Lucro por apostar no " + grupoB[0][4] + ": " + int_to_string(aposta[0]) + " -------  " + "Lucro por apostar no " + grupoA[0][1] + ": " + int_to_string(aposta[1]) + "\n";
 
 
-    simulacaoAposta = simulaAposta(times, aux2, aux3, "06");
+    if(valorDaAposta > 500 && valorDaAposta < 1000){
+        valorDaAposta = 1000;
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "06");
+    }else if(valorDaAposta > 1000){
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "06");
+    }else{
+        valorDaAposta = 1000;
+    }
 
     for(int i = 0; i < 2; i++){
         if( simulacaoAposta[i] != -1){
@@ -919,7 +999,14 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
     aux3 += "Lucro por apostar no " + grupoB[0][4] + ": " + int_to_string(aposta[0]) + " -------  " + "Lucro por apostar no " + grupoA[0][4] + ": " + int_to_string(aposta[1]) + "\n";
 
 
-    simulacaoAposta = simulaAposta(times, aux2, aux3, "07");
+    if(valorDaAposta > 500 && valorDaAposta < 1000){
+        valorDaAposta = 1000;
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "07");
+    }else if(valorDaAposta > 1000){
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "07");
+    }else{
+        valorDaAposta = 1000;
+    }
 
 
     for(int i = 0; i < 2; i++){
@@ -985,7 +1072,14 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
     aux3 += "Lucro por apostar no " + grupoB[0][4] + ": " + int_to_string(aposta[0]) + " -------  " + "Lucro por apostar no " + grupoA[0][0] + ": " + int_to_string(aposta[1]) + "\n";
 
 
-    simulacaoAposta = simulaAposta(times, aux2, aux3, "08");
+    if(valorDaAposta > 500 && valorDaAposta < 1000){
+        valorDaAposta = 1000;
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "08");
+    }else if(valorDaAposta > 1000){
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "08");
+    }else{
+        valorDaAposta = 1000;
+    }
 
     for(int i = 0; i < 2; i++){
         if( simulacaoAposta[i] != -1){
@@ -1051,7 +1145,14 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
     aux3 += "Lucro por apostar no " + grupoB[0][4] + ": " + int_to_string(aposta[0]) + " -------  " + "Lucro por apostar no " + grupoA[0][3] + ": " + int_to_string(aposta[1]) + "\n";
 
 
-    simulacaoAposta = simulaAposta(times, aux2, aux3, "09");
+    if(valorDaAposta > 500 && valorDaAposta < 1000){
+        valorDaAposta = 1000;
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "09");
+    }else if(valorDaAposta > 1000){
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "09");
+    }else{
+        valorDaAposta = 1000;
+    }
 
     for(int i = 0; i < 2; i++){
         if( simulacaoAposta[i] != -1){
@@ -1117,7 +1218,14 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
     valorDoJogo10[getIdTimeGrupo(times, grupoB[0][4])] = aposta[0];
     aux3 += "Lucro por apostar no " + grupoB[0][4] + ": " + int_to_string(aposta[0]) + " -------  " + "Lucro por apostar no " + grupoA[0][2] + ": " + int_to_string(aposta[1]) + "\n";
 
-    simulacaoAposta = simulaAposta(times, aux2, aux3, "10");
+    if(valorDaAposta > 500 && valorDaAposta < 1000){
+        valorDaAposta = 1000;
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "10");
+    }else if(valorDaAposta > 1000){
+        simulacaoAposta = simulaAposta(times, aux2, aux3, "10");
+    }else{
+        valorDaAposta = 1000;
+    }
 
     for(int i = 0; i < 2; i++){
         if( simulacaoAposta[i] != -1){
@@ -1337,11 +1445,39 @@ int main() {
                             {"0","0","0","0","0"},  // Derrotas
                             {"0","0","0","0","0"}}; // Gols
 
+    string jogadoresParaTransferencia[25][4] = {
+                            {"Lopeu","A","10","30000"},
+                            {"Chaveirinho","A","8","22000"},
+                            {"Warlei","A","8","19000"},
+                            {"Cleiton","A","7","16000"},
+                            {"Romeu ","M","7","18000"},
+                            {"Dedé ","M","8","23000"},
+                            {"Leandro ","M","5","8000"},
+                            {"Xabala ","M","9","21000"},
+                            {"Gilmar ","Z","6","11000"},
+                            {"Victor ","Z","7","14000"},
+                            {"Fábio ","Z","7","14000"},
+                            {"Igor ","Z","8","19000"},
+                            {"Richardson","Z","9","25000"},
+                            {"Henrique Mattos","Z","9","23000"},
+                            {"Neílson","Z","8","18000"},
+                            {"Alemão","Z","8","19000"},
+                            {"Coradin","Z","9","23000"},
+                            {"Lúcio Curió","A","7","16000"},
+                            {"Henrique","A","6","12000"},
+                            {"Léo Alves","A","7","16000"},
+                            {"Klayvert","A","7","15000"},
+                            {"Léo Silva","M","7","12000"},
+                            {"Leandro","M","8","8000"},
+                            {"Geo","M","5","5000"},
+                            {"Senega","M","6","9000"}};
+
+
 
     string sorteio = SorteiroFaseDeGrupos(timesAtributos, Grupo_A, Grupo_B);
-    //cout << sorteio << endl;
+    cout << sorteio << endl;
 
-    vector<string> jogos = RealizandoOsJogosDaFaseDeGrupos(timesAtributos, Grupo_A, Grupo_B);
+    vector<string> jogos = RealizandoOsJogosDaFaseDeGrupos(timesAtributos, Grupo_A, Grupo_B, jogadoresParaTransferencia);
 
 
 /*
