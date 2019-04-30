@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
+#include <unistd.h>
 #include "CalculoDeForca.hpp"
 
 #ifndef FINALSEMIFINAL_HPP
@@ -214,19 +215,27 @@ void finalCampeonato(){
 
 
     if(finalTabela[1][0] > finalTabela[1][1]){
-        cout << " VENCEDOR DO CAMPEONATO :" << endl;
-        cout << "--------" << timesAtributos[0][finalTabela[0][0]] << "--------";
-    }else if(finalTabela[1][0] < finalTabela[1][1]){
+       
+
         cout << " VENCEDOR DO CAMPEONATO :" << endl;
         cout << "--------" << timesAtributos[timesDaFinal[0]][0] << "--------";
+    }else if(finalTabela[1][0] < finalTabela[1][1]){
+       
+
+        cout << " VENCEDOR DO CAMPEONATO :" << endl;
+        cout << "--------" << timesAtributos[timesDaFinal[1]][0] << "--------";
 
     }else{
         int *resultado = new int[3];
         resultado = penaltis(timesDaFinal[0], timesDaFinal[1]);
         cout<<"-----------EMPATE-----------"<<endl;
         cout<<"----------PENALTIS----------"<<endl;
+     
+
         cout << " VENCEDOR DO CAMPEONATO :" << endl;
         cout << "--------" << timesAtributos[timesDaFinal[0]][0] << "--------";
+
+        
     }
 }
 #endif

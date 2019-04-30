@@ -364,7 +364,7 @@ int* simulaAposta(string times[10][7], string aux, string aux2,  string cont){
 
     apost = (int*)malloc(2*sizeof(int));
 
-    if (s == 'S'){
+    if (s == 'S' || s == 's'){
         cout<<"Digite o nome do time que gostaria de apostar: "<<endl;
         cin.ignore(1000,'\n');
         getline(cin,nomeTime);
@@ -379,7 +379,7 @@ int* simulaAposta(string times[10][7], string aux, string aux2,  string cont){
             apost[0] = id;
             cout<<"Gostaria de realizar a segunda aposta? "<<endl;
             cin>>s;
-            if (s == 'S'){
+            if (s == 'S' || s == 's'){
                 nomeTime = "";
                 cout<<"Digite o nome do time que gostaria de apostar: "<<endl;
                 cin.ignore(1000,'\n');
@@ -498,14 +498,14 @@ string RealizaRodadasDaFaseDeGrupos(string times[10][7], string grupoA[7][5], st
 
     if(gols_time1 > gols_time2){
         auxTimes[idTimex] = 1;
-        aux += grupoA[0][TimeX] + " x " + grupoB[0][TimeY] + " : C" + "\n"; // Se o time de casa ganhou
+        aux += grupoA[0][TimeX] + " " + int_to_string(gols_time1) +" x " +  int_to_string(gols_time2) +  " " +grupoB[0][TimeY] + " : C" + "\n"; // Se o time de casa ganhou
     }
     else if(gols_time2 > gols_time1) {
         auxTimes[idTimey] = 1;
-        aux += grupoA[0][TimeX] + " x " + grupoB[0][TimeY] + " : F" + "\n"; // Se o time de fora ganhou
+        aux += grupoA[0][TimeX] + " " +int_to_string(gols_time1)+ " x " + int_to_string(gols_time2) + " "  + grupoB[0][TimeY] + " : F" + "\n"; // Se o time de fora ganhou
     }
     else {
-        aux += grupoA[0][TimeX] + " x " + grupoB[0][TimeY] + " : E" + "\n"; // Se houver empate
+        aux += grupoA[0][TimeX] + " "  + int_to_string(gols_time1)+ " x " + int_to_string(gols_time2) + " " + grupoB[0][TimeY] + " : E" + "\n"; // Se houver empate
     }
 
     //atualizando as forças dos times de acordo com os jogos
@@ -660,6 +660,7 @@ vector<string> RealizandoOsJogosDaFaseDeGrupos(string times[10][7], string grupo
 
     cout<<"Saldo total do usuario depois dessa rodada: " + int_to_string(valorDeAposta) + "\n\n"<<endl;
 
+sleep(3);
     // Rodada 2
     aux = "";
     aux2 = "";
