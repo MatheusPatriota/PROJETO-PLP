@@ -53,9 +53,11 @@ main = do
  opcao <- getLine
  valor <- readLn :: IO Int
  let capital = seleciona opcao valor
-
+ 
  putStr "Seu capital inicial será de: " 
  print capital
+ -- exemplo de como atualizar o valor do atributo do time da maneira correta
+ let aux = campinense
+ let campinense  = atualizaAtributo  aux 90
 
- print (atualizaAtributo campinense 90)
-
+ print campinense
