@@ -1,3 +1,6 @@
+import System.Random
+import Data.List
+
 main :: IO()
 
 -- Funcoes de calculo de gols de um jogo de dois times
@@ -13,6 +16,14 @@ calculoDeForca timeA timeB = do
     let y = auxCalculoDeForca timeB
     (x, y)
 -- Fim das funcoes de calculo de gols
+
+-- Metodo que cria um lista de tamanho N com numero aleatorios entre 0 e 9
+randomList :: Int -> IO([Int])
+randomList 0 = return []
+randomList n = do
+  r  <- randomRIO (0,9)
+  rs <- randomList (n-1)
+  return (r:rs) 
 
 -- Estrutura de um time
 data Time = Time {
@@ -61,11 +72,16 @@ validaString texto tamanho
 
 -- Funcao para imprimir bunitinho um time de um grupo
 imprimeTime :: TimeDeGrupo -> Int -> String
-imprimeTime timeX  pos = (show pos) ++ "º  " ++ (validaString (nome (time timeX)) 20) ++ "       " ++ (validaString (show (pontos timeX)) 2) ++ "          " ++ (validaString (show (jogos timeX)) 2) ++ "           " ++ (validaString (show (vitorias timeX)) 2) ++ "              " ++ (validaString (show (empates timeX)) 2) ++ "              " ++ (validaString (show (derrotas timeX)) 2) ++ "            " ++ (validaString (show (gols timeX)) 2)
+imprimeTime timeX pos = (show pos) ++ "º  " ++ (validaString (nome (time timeX)) 20) ++ "       " ++ (validaString (show (pontos timeX)) 2) ++ "          " ++ (validaString (show (jogos timeX)) 2) ++ "           " ++ (validaString (show (vitorias timeX)) 2) ++ "              " ++ (validaString (show (empates timeX)) 2) ++ "              " ++ (validaString (show (derrotas timeX)) 2) ++ "            " ++ (validaString (show (gols timeX)) 2)
 
 -- Funcao pra imprimir um grupo bem bunitinho com ajuda do metodo anterior
 imprimeGrupoA :: GrupoA -> String
 imprimeGrupoA grupo = (imprimeTime (time1 grupo) 1) ++ "\n"  ++ (imprimeTime (time2 grupo) 2) ++ "\n" ++ (imprimeTime (time3 grupo) 3) ++ "\n" ++ (imprimeTime (time4 grupo) 4) ++ "\n" ++ (imprimeTime (time5 grupo) 5)
+
+-- Funcao pra imprimir um grupo bem bunitinho com ajuda do metodo anterior
+imprimeGrupoB :: GrupoB -> String
+imprimeGrupoB grupo = (imprimeTime (time6 grupo) 1) ++ "\n"  ++ (imprimeTime (time7 grupo) 2) ++ "\n" ++ (imprimeTime (time8 grupo) 3) ++ "\n" ++ (imprimeTime (time9 grupo) 4) ++ "\n" ++ (imprimeTime (time10 grupo) 5)
+
 
 -- Funcao para atualizar os pontos de um time de grupo
 att_Pontos :: TimeDeGrupo -> Int -> TimeDeGrupo
@@ -150,50 +166,66 @@ main = do
  -- Criando times com seus atributos
  let campinense = Time "Campinense" 50 50 50 50 50
  let treze = Time "Treze" 50 50 50 50 50
- let botafogo = Time "Bota Fogo" 50 50 50 50 50
- let atletico = Time "Atletico" 50 50 50 50 50
+ let botafogo = Time "Botafogo-PB" 50 50 50 50 50
+ let atletico = Time "Atletico-PB" 50 50 50 50 50
  let souza = Time "Souza" 50 50 50 50 50
+ let naciconal = Time "Nacional de Patos" 50 50 50 50 50
+ let serrano = Time "Serrano" 50 50 50 50 50
+ let perilima = Time "Perilima" 50 50 50 50 50
+ let esporte = Time "Esporte de Patos" 50 50 50 50 50
+ let csp = Time "CSP" 50 50 50 50 50
  
  -- Criando times de grupo com seus atributos
  let time1 = TimeDeGrupo campinense 0 0 0 0 0 0
  let time2 = TimeDeGrupo treze 0 0 0 0 0 0
  let time3 = TimeDeGrupo botafogo 0 0 0 0 0 0
  let time4 = TimeDeGrupo atletico 0 0 0 0 0 0
- let time5 = TimeDeGrupo souza 0 0 0 0 0 0 
- 
- -- Criando o grupoA com os times criados anteriormente
- let grupoA = GrupoA time1 time2 time3 time4 time5
+ let time5 = TimeDeGrupo souza 0 0 0 0 0 0
+ let time6 = TimeDeGrupo naciconal 0 0 0 0 0 0 
+ let time7 = TimeDeGrupo serrano 0 0 0 0 0 0 
+ let time8 = TimeDeGrupo perilima 0 0 0 0 0 0
+ let time9 = TimeDeGrupo esporte 0 0 0 0 0 0
+ let time10 = TimeDeGrupo csp 0 0 0 0 0 0  
+
+ let times = [time1, time2, time3, time4, time5, time6, time7, time8, time9, time10]
+ io <- randomList 100 :: IO [Int]
+ let indices = (nub io)
+
+ -- Criando o grupoA e grupoB com os times criados anteriormente
+ let grupoA = GrupoA (times!!(indices!!0)) (times!!(indices!!1)) (times!!(indices!!2)) (times!!(indices!!3)) (times!!(indices!!4))
+ let grupoB = GrupoB (times!!(indices!!5)) (times!!(indices!!6)) (times!!(indices!!7)) (times!!(indices!!8)) (times!!(indices!!9))
  
  -- Atualizando os pontos do time1
  let aux = time1
  let time1 = att_Pontos aux 50
- print time1
  -- Atualizando os jogos do time1
  let aux = time1
  let time1 = att_Jogos aux 40
- print time1
  -- Atualizando as vitorias do time1
  let aux = time1
  let time1 = att_Vitorias aux 10
- print time1
  -- Atualizando os empates do time1
  let aux = time1
  let time1 = att_Empates aux 20
- print time1
  -- Atualizando as derrotas do time1
  let aux = time1
- let time1 = att_Derrotas aux 10
- print time1 
+ let time1 = att_Derrotas aux 10 
  -- Atualizando os gols do time1
  let aux = time1
  let time1 = att_Gols aux 10
- print time1
+
+ -- Atualizando o time na lista de times
+ let times = [time1, time2, time3, time4, time5, time6, time7, time8, time9, time10]
  
  -- Atualizando o time no grupo com as alteracoes feitas anteriormente
- let grupoA = GrupoA time1 time2 time3 time4 time5
+ let grupoA = GrupoA (times!!(indices!!0)) (times!!(indices!!1)) (times!!(indices!!2)) (times!!(indices!!3)) (times!!(indices!!4))
+ let grupoB = GrupoB (times!!(indices!!5)) (times!!(indices!!6)) (times!!(indices!!7)) (times!!(indices!!8)) (times!!(indices!!9))
 
  putStrLn ""
-
  -- Imprimindo o grupo de um jeito bem bunitinho
  putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
  putStrLn (imprimeGrupoA grupoA)
+ putStrLn ""
+ putStrLn "Classificação: GrupoB        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoB grupoB)
+ putStrLn ""
