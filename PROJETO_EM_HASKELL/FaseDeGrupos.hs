@@ -231,7 +231,10 @@ main = do
  
  -- Ordenando o grupo pelos pontos de cada time
  let aux = timesDoGrupoA
- let timesDoGrupoA = sortBy ordenaGrupo aux
+ let timesDoGrupoA = reverse (sortBy ordenaGrupo aux)
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = reverse (sortBy ordenaGrupo aux)
 
  -- Atualizando o time no grupo com as alteracoes feitas anteriormente
  let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
