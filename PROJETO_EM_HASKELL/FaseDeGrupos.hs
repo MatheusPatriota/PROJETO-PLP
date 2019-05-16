@@ -235,7 +235,7 @@ main = do
 
  -- Atualizando o time no grupo com as alteracoes feitas anteriormente
  let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
- let grupoB = GrupoB (timesDoGrupoB!!5) (timesDoGrupoB!!6) (timesDoGrupoB!!7) (timesDoGrupoB!!8) (timesDoGrupoB!!9)
+ let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
 
  putStrLn ""
  -- Imprimindo o grupo de um jeito bem bunitinho
