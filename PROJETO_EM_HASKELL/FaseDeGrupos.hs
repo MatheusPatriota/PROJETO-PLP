@@ -83,6 +83,11 @@ imprimeGrupoB :: GrupoB -> String
 imprimeGrupoB grupo = (imprimeTime (time6 grupo) 1) ++ "\n"  ++ (imprimeTime (time7 grupo) 2) ++ "\n" ++ (imprimeTime (time8 grupo) 3) ++ "\n" ++ (imprimeTime (time9 grupo) 4) ++ "\n" ++ (imprimeTime (time10 grupo) 5)
 
 
+ordenaGrupo primeiroTime segundoTime
+ | (pontos primeiroTime) > (pontos segundoTime) = GT
+ | (pontos primeiroTime) < (pontos segundoTime) = LT
+ | otherwise = compare (gols primeiroTime) (gols segundoTime)
+
 -- Funcao para atualizar os pontos de um time de grupo
 att_Pontos :: TimeDeGrupo -> Int -> TimeDeGrupo
 att_Pontos timeX valor = TimeDeGrupo {
@@ -160,40 +165,44 @@ main = do
  
  -- Time so pra deixar default na constante AUX
  let timeLuiggy = Time "LuiggyFC" 99 99 99 99 99
- let timeNULL = TimeDeGrupo timeLuiggy 0 0 0 0 0 0
- let aux = timeNULL
+ let timeNULL   = TimeDeGrupo timeLuiggy 0 0 0 0 0 0
+ let aux        = timeNULL
  
  -- Criando times com seus atributos
- let campinense = Time "Campinense" 50 50 50 50 50
- let treze = Time "Treze" 50 50 50 50 50
- let botafogo = Time "Botafogo-PB" 50 50 50 50 50
- let atletico = Time "Atletico-PB" 50 50 50 50 50
- let souza = Time "Souza" 50 50 50 50 50
- let naciconal = Time "Nacional de Patos" 50 50 50 50 50
- let serrano = Time "Serrano" 50 50 50 50 50
- let perilima = Time "Perilima" 50 50 50 50 50
- let esporte = Time "Esporte de Patos" 50 50 50 50 50
- let csp = Time "CSP" 50 50 50 50 50
+ let campinense = Time "Campinense"        50 50 50 50 50
+ let treze      = Time "Treze"             50 50 50 50 50
+ let botafogo   = Time "Botafogo-PB"       50 50 50 50 50
+ let atletico   = Time "Atletico-PB"       50 50 50 50 50
+ let souza      = Time "Souza"             50 50 50 50 50
+ let naciconal  = Time "Nacional de Patos" 50 50 50 50 50
+ let serrano    = Time "Serrano"           50 50 50 50 50
+ let perilima   = Time "Perilima"          50 50 50 50 50
+ let esporte    = Time "Esporte de Patos"  50 50 50 50 50
+ let csp        = Time "CSP"               50 50 50 50 50
  
  -- Criando times de grupo com seus atributos
- let time1 = TimeDeGrupo campinense 0 0 0 0 0 0
- let time2 = TimeDeGrupo treze 0 0 0 0 0 0
- let time3 = TimeDeGrupo botafogo 0 0 0 0 0 0
- let time4 = TimeDeGrupo atletico 0 0 0 0 0 0
- let time5 = TimeDeGrupo souza 0 0 0 0 0 0
- let time6 = TimeDeGrupo naciconal 0 0 0 0 0 0 
- let time7 = TimeDeGrupo serrano 0 0 0 0 0 0 
- let time8 = TimeDeGrupo perilima 0 0 0 0 0 0
- let time9 = TimeDeGrupo esporte 0 0 0 0 0 0
- let time10 = TimeDeGrupo csp 0 0 0 0 0 0  
-
+ let time1  = TimeDeGrupo campinense 0 0 0 0 0 0
+ let time2  = TimeDeGrupo treze      0 0 0 0 0 0
+ let time3  = TimeDeGrupo botafogo   0 0 0 0 0 0
+ let time4  = TimeDeGrupo atletico   0 0 0 0 0 0
+ let time5  = TimeDeGrupo souza      0 0 0 0 0 0
+ let time6  = TimeDeGrupo naciconal  0 0 0 0 0 0 
+ let time7  = TimeDeGrupo serrano    0 0 0 0 0 0 
+ let time8  = TimeDeGrupo perilima   0 0 0 0 0 0
+ let time9  = TimeDeGrupo esporte    0 0 0 0 0 0
+ let time10 = TimeDeGrupo csp        0 0 0 0 0 0  
+ 
+ -- Criando lista com os times e lista de indices com a nova ordem (aleatoria) dos times e colocando os times nos grupos
  let times = [time1, time2, time3, time4, time5, time6, time7, time8, time9, time10]
  io <- randomList 100 :: IO [Int]
  let indices = (nub io)
 
+ let timesDoGrupoA = [(times!!(indices!!0)), (times!!(indices!!1)), (times!!(indices!!2)), (times!!(indices!!3)), (times!!(indices!!4))]
+ let timesDoGrupoB = [(times!!(indices!!5)), (times!!(indices!!6)), (times!!(indices!!7)), (times!!(indices!!8)), (times!!(indices!!9))]
+
  -- Criando o grupoA e grupoB com os times criados anteriormente
- let grupoA = GrupoA (times!!(indices!!0)) (times!!(indices!!1)) (times!!(indices!!2)) (times!!(indices!!3)) (times!!(indices!!4))
- let grupoB = GrupoB (times!!(indices!!5)) (times!!(indices!!6)) (times!!(indices!!7)) (times!!(indices!!8)) (times!!(indices!!9))
+ let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
+ let grupoB = GrupoB (timesDoGrupoB!!5) (timesDoGrupoB!!6) (timesDoGrupoB!!7) (timesDoGrupoB!!8) (timesDoGrupoB!!9)
  
  -- Atualizando os pontos do time1
  let aux = time1
@@ -217,9 +226,16 @@ main = do
  -- Atualizando o time na lista de times
  let times = [time1, time2, time3, time4, time5, time6, time7, time8, time9, time10]
  
+ let timesDoGrupoA = [(times!!(indices!!0)), (times!!(indices!!1)), (times!!(indices!!2)), (times!!(indices!!3)), (times!!(indices!!4))]
+ let timesDoGrupoB = [(times!!(indices!!5)), (times!!(indices!!6)), (times!!(indices!!7)), (times!!(indices!!8)), (times!!(indices!!9))]
+ 
+ -- Ordenando o grupo pelos pontos de cada time
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = sortBy ordenaGrupo aux
+
  -- Atualizando o time no grupo com as alteracoes feitas anteriormente
- let grupoA = GrupoA (times!!(indices!!0)) (times!!(indices!!1)) (times!!(indices!!2)) (times!!(indices!!3)) (times!!(indices!!4))
- let grupoB = GrupoB (times!!(indices!!5)) (times!!(indices!!6)) (times!!(indices!!7)) (times!!(indices!!8)) (times!!(indices!!9))
+ let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
+ let grupoB = GrupoB (timesDoGrupoB!!5) (timesDoGrupoB!!6) (timesDoGrupoB!!7) (timesDoGrupoB!!8) (timesDoGrupoB!!9)
 
  putStrLn ""
  -- Imprimindo o grupo de um jeito bem bunitinho
