@@ -1,31 +1,6 @@
--- estrutura de dados reponsavel por amazenar um time
-data Time = Time {
- nome :: String,
- ataque :: Int,
- defesa :: Int,
- controle :: Int,
- disposicaoFisica :: Int,
- confianca :: Int,
- adefinir :: Int
-} deriving (Show)
-
---  exemplo de funcao de como seria para atualizar atributo do time
-atualizaAtributo :: Time -> Int -> Time
-atualizaAtributo time valor = Time {
- nome = nome time,
- ataque = ataque time,
- defesa = defesa time,
- controle = controle time,
- disposicaoFisica = disposicaoFisica time, 
- confianca = confianca time,
- adefinir = valor
-}
-
--- seleciona e reponsavel por atualizar o valor do capital de apostas 
-seleciona :: String -> Int -> Int
-seleciona opcao valor  
- | opcao == "s" = valor + 2000
- | otherwise = 2000
+-- importando arquivos com funcoes necessarias
+import EstruturaDoTime
+-- import FaseDeGrupos
 
 -- main fazendo a chamada e os prints
 main :: IO()
@@ -41,9 +16,7 @@ main = do
  let perilima = Time "Perilima"  46 50 59 46 100 80
  let esporteDePatos = Time "Esporte de Patos" 57 62 61 57 100 80
  let csp = Time "CSP"  64 66 69 65 100 80
- 
-
-
+ let capital = 2000
  putStrLn "Esses são os Times que disputarão o Campeonato Paraibano: "
  putStrLn (nome campinense ++ ", " ++ nome treze ++ ", " ++ nome botafogo ++ ", " ++ nome souza ++ ", " ++ nome nacionalDePatos ++ ", " ++ nome serrano ++ ", " ++ nome atleticoPB ++ ", " ++ nome perilima ++ ", " ++ nome esporteDePatos ++ ", " ++ nome csp)
 
@@ -51,13 +24,14 @@ main = do
  putStrLn ""
  putStrLn "Deseja aumentar o capital das apostas? (s/n) "
  opcao <- getLine
- valor <- readLn :: IO Int
- let capital = seleciona opcao valor
+ cap <- seleciona opcao 
+ let aux = capital
+ let capital = aux +  cap
  
  putStr "Seu capital inicial será de: " 
  print capital
  -- exemplo de como atualizar o valor do atributo do time da maneira correta
  let aux = campinense
- let campinense  = atualizaAtributo  aux 90
+--  let campinense  = atualizaAtributo  aux 90
 
  print campinense
