@@ -226,10 +226,35 @@ atualizaGrupoA timeX (primeiro:resto)
 
 -- Metodo que atualiza um time no grupoB (se ele existir no grupo)
 atualizaGrupoB :: TimeDeGrupo -> [TimeDeGrupo] -> [TimeDeGrupo]
-atualizaGrupoB timeX [] = []
-atualizaGrupoB timeX (primeiro:resto)
- | (nome (time timeX)) == (nome (time primeiro)) = [timeX] ++ resto
- | otherwise = [primeiro] ++ atualizaGrupoB timeX resto
+atualizaGrupoB timeY [] = []
+atualizaGrupoB timeY (primeiro:resto)
+ | (nome (time timeY)) == (nome (time primeiro)) = [timeY] ++ resto
+ | otherwise = [primeiro] ++ atualizaGrupoB timeY resto
+
+-- Metodo que busca nos grupos apartir do seu nome e retorna o objeto completo
+buscaTime :: String -> [TimeDeGrupo] -> [TimeDeGrupo] -> TimeDeGrupo
+buscaTime timeX (primeiroA:restoA) (primeiroB:restoB) 
+ | timeX == (nome (time primeiroA)) = primeiroA
+ | timeX == (nome (time primeiroB)) = primeiroB
+ | otherwise = buscaTime timeX restoA restoB  
+
+-- Metodo que atualiza um time num grupo
+setTime :: TimeDeGrupo -> [TimeDeGrupo] -> [TimeDeGrupo]
+setTime t1 [] = []
+setTime t1 (x:xs)
+ | (nome (time t1)) == (nome (time x)) = [t1] ++ xs
+ | otherwise = [x] ++ setTime t1 xs
+
+-- Metodo que retorna os times classificados para semifinal do campeonato
+getClassificadosSemifinal :: [TimeDeGrupo] -> [TimeDeGrupo] -> ((TimeDeGrupo, TimeDeGrupo), (TimeDeGrupo, TimeDeGrupo))
+getClassificadosSemifinal grupoA grupoB = (((grupoA!!0),(grupoA!!1)),((grupoB!!0),(grupoB!!1)))
+
+-- Metodo que adiciona um time a uma lista de times
+addToList :: TimeDeGrupo -> TimeDeGrupo -> (Int,Int) -> [TimeDeGrupo] -> [TimeDeGrupo]
+addToList time timeNulo gols lista 
+ | (fst gols) /= (snd gols) = [time] ++ lista
+ | otherwise = [timeNulo] ++ lista
+
 
 -- Main de testes
 main = do
@@ -239,6 +264,8 @@ main = do
  let timeNULL   = TimeDeGrupo timeLuiggy 0 0 0 0 0 0
  let aux        = timeNULL
  let aux2 = 0;
+ let auxVencedores = []
+ let vencedoresRodada = []
  
  -- Criando times com seus atributos
  let campinense = Time "Campinense"        70 20 40 70 80
@@ -269,6 +296,19 @@ main = do
  io <- randomList 1000 :: IO [Int]
  let indices = (nub io)
 
+ let t0 = (times!!(indices!!0))
+ let t1 = (times!!(indices!!1))
+ let t2 = (times!!(indices!!2))
+ let t3 = (times!!(indices!!3))
+ let t4 = (times!!(indices!!4))
+
+ let t5 = (times!!(indices!!5))
+ let t6 = (times!!(indices!!6))
+ let t7 = (times!!(indices!!7))
+ let t8 = (times!!(indices!!8))
+ let t9 = (times!!(indices!!9))
+
+
  let timesDoGrupoA = [(times!!(indices!!0)), (times!!(indices!!1)), (times!!(indices!!2)), (times!!(indices!!3)), (times!!(indices!!4))]
  let timesDoGrupoB = [(times!!(indices!!5)), (times!!(indices!!6)), (times!!(indices!!7)), (times!!(indices!!8)), (times!!(indices!!9))]
 
@@ -276,13 +316,14 @@ main = do
  let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
  let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
 
-
 -- Rodada 1
 -- Jogo 1
- let aux = (realizaJogos (timesDoGrupoA!!0) (timesDoGrupoB!!0)) 
+ let aux = (realizaJogos (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB)) 
  let jogo1 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
  let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
- let vencedores = [(snd (fst (fst aux)))] -- Lista de times vencedores da rodada
+
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
 
 
  let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
@@ -306,10 +347,12 @@ main = do
  let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
 
 -- Jogo 2
- let aux = (realizaJogos (timesDoGrupoA!!1) (timesDoGrupoB!!1)) 
+ let aux = (realizaJogos (buscaTime (nome (time t1)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB))
  let jogo2 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
  let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
- let vencedores = [(snd (fst (fst aux)))] -- Lista de times vencedores da rodada
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
 
  let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
  let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
@@ -332,10 +375,12 @@ main = do
  let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
 
  -- Jogo 3
- let aux = (realizaJogos (timesDoGrupoA!!2) (timesDoGrupoB!!2)) 
+ let aux = (realizaJogos (buscaTime (nome (time t2)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB))
  let jogo3 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
  let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
- let vencedores = [(snd (fst (fst aux)))] -- Lista de times vencedores da rodada
+
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
 
  let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
  let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
@@ -358,10 +403,12 @@ main = do
  let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
 
 -- Jogo 4
- let aux = (realizaJogos (timesDoGrupoA!!3) (timesDoGrupoB!!3)) 
+ let aux = (realizaJogos (buscaTime (nome (time t3)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t8)) timesDoGrupoA timesDoGrupoB))
  let jogo4 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
  let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
- let vencedores = [(snd (fst (fst aux)))] -- Lista de times vencedores da rodada
+
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
 
  let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
  let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
@@ -384,10 +431,12 @@ main = do
  let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
 
 -- Jogo 5
- let aux = (realizaJogos (timesDoGrupoA!!4) (timesDoGrupoB!!4)) 
+ let aux = (realizaJogos (buscaTime (nome (time t4)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t9)) timesDoGrupoA timesDoGrupoB))
  let jogo5 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
  let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
- let vencedores = [(snd (fst (fst aux)))] -- Lista de times vencedores da rodada
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
 
  let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
  let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
@@ -409,12 +458,390 @@ main = do
  let aux = timesDoGrupoB
  let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
 
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (snd novosTimes) aux
 
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (snd novosTimes) aux
+
+
+ -- Ordenando o grupo pelos pontos de cada time
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = reverse (sortBy ordenaGrupo aux)
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = reverse (sortBy ordenaGrupo aux)
+
+ putStrLn "Partidas Rodada 01:"
  print jogo1
  print jogo2
  print jogo3
  print jogo4
  print jogo5
+ putStrLn  ""
+
+ -- Atualizando o time no grupo com as alteracoes feitas anteriormente
+ let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
+ let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
+
+ putStrLn "----------------------------------------------- Rodada 01 -----------------------------------------------"
+ -- Imprimindo o grupo de um jeito bem bunitinho
+ putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoA grupoA)
+ putStrLn ""
+ putStrLn "Classificação: GrupoB        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoB grupoB)
+ putStrLn ""
+
+ -- Metodo para ajudar nas apostas
+ putStrLn "Times vencedores da rodada: "
+ putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+ -- Fim da Rodada 1
+
+-- Rodada 2
+-- Jogo 1
+ let vencedoresRodada = []
+ let aux = (realizaJogos (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t9)) timesDoGrupoA timesDoGrupoB))
+ let jogo6 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 2
+ let aux = (realizaJogos (buscaTime (nome (time t1)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB)) 
+ let jogo7 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ -- Jogo 3
+ let aux = (realizaJogos (buscaTime (nome (time t2)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB))
+ let jogo8 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 4
+ let aux = (realizaJogos (buscaTime (nome (time t3)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB)) 
+ let jogo9 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 5
+ let aux = (realizaJogos (buscaTime (nome (time t4)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t8)) timesDoGrupoA timesDoGrupoB))
+ let jogo10 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (snd novosTimes) aux
+
+ -- Ordenando o grupo pelos pontos de cada time
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = reverse (sortBy ordenaGrupo aux)
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = reverse (sortBy ordenaGrupo aux)
+
+ putStrLn "Partidas Rodada 02:"
+ print jogo6
+ print jogo7
+ print jogo8
+ print jogo9
+ print jogo10
+ putStrLn ""
+
+ -- Atualizando o time no grupo com as alteracoes feitas anteriormente
+ let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
+ let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
+
+ putStrLn "----------------------------------------------- Rodada 02 -----------------------------------------------"
+ -- Imprimindo o grupo de um jeito bem bunitinho
+ putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoA grupoA)
+ putStrLn ""
+ putStrLn "Classificação: GrupoB        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoB grupoB)
+ putStrLn ""
+
+ -- Metodo para ajudar nas apostas
+ putStrLn "Times vencedores da rodada: "
+ putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+ -- Fim da Rodada 2
+
+-- Rodada 3
+-- Jogo 1
+ let vencedoresRodada = []
+ let aux = (realizaJogos (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t8)) timesDoGrupoA timesDoGrupoB))
+ let jogo11 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 2
+ let aux = (realizaJogos (buscaTime (nome (time t1)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t9)) timesDoGrupoA timesDoGrupoB))
+ let jogo12 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ -- Jogo 3
+ let aux = (realizaJogos (buscaTime (nome (time t2)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB)) 
+ let jogo13 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 4
+ let aux = (realizaJogos (buscaTime (nome (time t3)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB))
+ let jogo14 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 5
+ let aux = (realizaJogos (buscaTime (nome (time t4)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB)) 
+ let jogo15 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (snd novosTimes) aux
 
 
  -- Ordenando o grupo pelos pontos de cada time
@@ -428,7 +855,15 @@ main = do
  let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
  let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
 
+ putStrLn "Partidas Rodada 03:"
+ print jogo11
+ print jogo12
+ print jogo13
+ print jogo14
+ print jogo15
  putStrLn ""
+
+ putStrLn "----------------------------------------------- Rodada 03 -----------------------------------------------"
  -- Imprimindo o grupo de um jeito bem bunitinho
  putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
  putStrLn (imprimeGrupoA grupoA)
@@ -436,16 +871,1331 @@ main = do
  putStrLn "Classificação: GrupoB        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
  putStrLn (imprimeGrupoB grupoB)
  putStrLn ""
+ 
+ -- Metodo para ajudar nas apostas
+ putStrLn "Times vencedores da rodada: "
+ putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+ -- Fim da Rodada 3
+
+-- Rodada 4
+-- Jogo 1
+ let vencedoresRodada = []
+ let aux = (realizaJogos (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB)) 
+ let jogo16 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 2
+ let aux = (realizaJogos (buscaTime (nome (time t1)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t8)) timesDoGrupoA timesDoGrupoB)) 
+ let jogo17 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ -- Jogo 3
+ let aux = (realizaJogos (buscaTime (nome (time t2)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t9)) timesDoGrupoA timesDoGrupoB)) 
+ let jogo18 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 4
+ let aux = (realizaJogos (buscaTime (nome (time t3)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB))  
+ let jogo19 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 5
+ let aux = (realizaJogos (buscaTime (nome (time t4)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB))  
+ let jogo20 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (snd novosTimes) aux
+
+ -- Ordenando o grupo pelos pontos de cada time
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = reverse (sortBy ordenaGrupo aux)
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = reverse (sortBy ordenaGrupo aux)
+
+ -- Atualizando o time no grupo com as alteracoes feitas anteriormente
+ let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
+ let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
+
+ putStrLn "Partidas Rodada 04:"
+ print jogo16
+ print jogo17
+ print jogo18
+ print jogo19
+ print jogo20
+ putStrLn ""
+
+ putStrLn "----------------------------------------------- Rodada 04 -----------------------------------------------"
+ -- Imprimindo o grupo de um jeito bem bunitinho
+ putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoA grupoA)
+ putStrLn ""
+ putStrLn "Classificação: GrupoB        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoB grupoB)
+ putStrLn ""
+ -- Metodo para ajudar nas apostas
+ putStrLn "Times vencedores da rodada: "
+ putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+ -- Fim da Rodada 4
+
+
+-- Rodada 5
+-- Jogo 1
+ let vencedoresRodada = []
+ let aux = (realizaJogos (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB))  
+ let jogo21 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 2
+ let aux = (realizaJogos (buscaTime (nome (time t1)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB))   
+ let jogo22 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ -- Jogo 3
+ let aux = (realizaJogos (buscaTime (nome (time t2)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t8)) timesDoGrupoA timesDoGrupoB))   
+ let jogo23 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 4
+ let aux = (realizaJogos (buscaTime (nome (time t3)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t9)) timesDoGrupoA timesDoGrupoB))   
+ let jogo24 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 5
+ let aux = (realizaJogos (buscaTime (nome (time t4)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB))   
+ let jogo25 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (snd novosTimes) aux
+
+ -- Ordenando o grupo pelos pontos de cada time
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = reverse (sortBy ordenaGrupo aux)
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = reverse (sortBy ordenaGrupo aux)
+
+ -- Atualizando o time no grupo com as alteracoes feitas anteriormente
+ let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
+ let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
+
+ putStrLn "Partidas Rodada 05:"
+ print jogo21
+ print jogo22
+ print jogo23
+ print jogo24
+ print jogo25
+ putStrLn ""
+
+ putStrLn "----------------------------------------------- Rodada 05 -----------------------------------------------"
+ -- Imprimindo o grupo de um jeito bem bunitinho
+ putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoA grupoA)
+ putStrLn ""
+ putStrLn "Classificação: GrupoB        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoB grupoB)
+ putStrLn ""
+ -- Metodo para ajudar nas apostas
+ putStrLn "Times vencedores da rodada: "
+ putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+ -- Fim da Rodada 5
+
+
+ -- Rodada 6
+-- Jogo 1
+ let vencedoresRodada = []
+ let aux = (realizaJogos (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB))  
+ let jogo26 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 2
+ let aux = (realizaJogos (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t1)) timesDoGrupoA timesDoGrupoB))   
+ let jogo27 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ -- Jogo 3
+ let aux = (realizaJogos (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t2)) timesDoGrupoA timesDoGrupoB))   
+ let jogo28 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 4
+ let aux = (realizaJogos (buscaTime (nome (time t8)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t3)) timesDoGrupoA timesDoGrupoB))   
+ let jogo29 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 5
+ let aux = (realizaJogos (buscaTime (nome (time t9)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t4)) timesDoGrupoA timesDoGrupoB))   
+ let jogo30 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (snd novosTimes) aux
+
+ -- Ordenando o grupo pelos pontos de cada time
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = reverse (sortBy ordenaGrupo aux)
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = reverse (sortBy ordenaGrupo aux)
+
+ -- Atualizando o time no grupo com as alteracoes feitas anteriormente
+ let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
+ let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
+
+ putStrLn "Partidas Rodada 06:"
+ print jogo26
+ print jogo27
+ print jogo28
+ print jogo29
+ print jogo30
+ putStrLn ""
+
+ putStrLn "----------------------------------------------- Rodada 06 -----------------------------------------------"
+ -- Imprimindo o grupo de um jeito bem bunitinho
+ putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoA grupoA)
+ putStrLn ""
+ putStrLn "Classificação: GrupoB        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoB grupoB)
+ putStrLn ""
+ -- Metodo para ajudar nas apostas
+ putStrLn "Times vencedores da rodada: "
+ putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+ -- Fim da Rodada 6
+
+
+ -- Rodada 7
+-- Jogo 1
+ let vencedoresRodada = []
+ let aux = (realizaJogos (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t4)) timesDoGrupoA timesDoGrupoB))  
+ let jogo31 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 2
+ let aux = (realizaJogos (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB))   
+ let jogo32 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ -- Jogo 3
+ let aux = (realizaJogos (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t1)) timesDoGrupoA timesDoGrupoB))   
+ let jogo33 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 4
+ let aux = (realizaJogos (buscaTime (nome (time t8)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t2)) timesDoGrupoA timesDoGrupoB))   
+ let jogo34 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 5
+ let aux = (realizaJogos (buscaTime (nome (time t9)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t3)) timesDoGrupoA timesDoGrupoB))   
+ let jogo35 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (snd novosTimes) aux
+
+ -- Ordenando o grupo pelos pontos de cada time
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = reverse (sortBy ordenaGrupo aux)
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = reverse (sortBy ordenaGrupo aux)
+
+ -- Atualizando o time no grupo com as alteracoes feitas anteriormente
+ let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
+ let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
+
+ putStrLn "Partidas Rodada 07:"
+ print jogo31
+ print jogo32
+ print jogo33
+ print jogo34
+ print jogo35
+ putStrLn ""
+
+ putStrLn "----------------------------------------------- Rodada 07 -----------------------------------------------"
+ -- Imprimindo o grupo de um jeito bem bunitinho
+ putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoA grupoA)
+ putStrLn ""
+ putStrLn "Classificação: GrupoB        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoB grupoB)
+ putStrLn ""
+ -- Metodo para ajudar nas apostas
+ putStrLn "Times vencedores da rodada: "
+ putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+ -- Fim da Rodada 7
 
 
 
+ -- Rodada 8
+-- Jogo 1
+ let vencedoresRodada = []
+ let aux = (realizaJogos (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t3)) timesDoGrupoA timesDoGrupoB))  
+ let jogo36 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 2
+ let aux = (realizaJogos (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t4)) timesDoGrupoA timesDoGrupoB))   
+ let jogo37 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ -- Jogo 3
+ let aux = (realizaJogos (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB))   
+ let jogo38 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 4
+ let aux = (realizaJogos (buscaTime (nome (time t8)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t1)) timesDoGrupoA timesDoGrupoB))   
+ let jogo39 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 5
+ let aux = (realizaJogos (buscaTime (nome (time t9)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t2)) timesDoGrupoA timesDoGrupoB))   
+ let jogo40 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (snd novosTimes) aux
+
+ -- Ordenando o grupo pelos pontos de cada time
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = reverse (sortBy ordenaGrupo aux)
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = reverse (sortBy ordenaGrupo aux)
+
+ -- Atualizando o time no grupo com as alteracoes feitas anteriormente
+ let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
+ let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
+
+ putStrLn "Partidas Rodada 08:"
+ print jogo36
+ print jogo37
+ print jogo38
+ print jogo39
+ print jogo40
+ putStrLn ""
+
+ putStrLn "----------------------------------------------- Rodada 08 -----------------------------------------------"
+ -- Imprimindo o grupo de um jeito bem bunitinho
+ putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoA grupoA)
+ putStrLn ""
+ putStrLn "Classificação: GrupoB        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoB grupoB)
+ putStrLn ""
+ -- Metodo para ajudar nas apostas
+ putStrLn "Times vencedores da rodada: "
+ putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+ -- Fim da Rodada 8
 
 
 
+ -- Rodada 9
+-- Jogo 1
+ let vencedoresRodada = []
+ let aux = (realizaJogos (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t2)) timesDoGrupoA timesDoGrupoB))  
+ let jogo41 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 2
+ let aux = (realizaJogos (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t3)) timesDoGrupoA timesDoGrupoB))   
+ let jogo42 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ -- Jogo 3
+ let aux = (realizaJogos (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t4)) timesDoGrupoA timesDoGrupoB))   
+ let jogo43 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 4
+ let aux = (realizaJogos (buscaTime (nome (time t8)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB))   
+ let jogo44 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 5
+ let aux = (realizaJogos (buscaTime (nome (time t9)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t1)) timesDoGrupoA timesDoGrupoB))   
+ let jogo45 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (snd novosTimes) aux
+
+ -- Ordenando o grupo pelos pontos de cada time
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = reverse (sortBy ordenaGrupo aux)
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = reverse (sortBy ordenaGrupo aux)
+
+ -- Atualizando o time no grupo com as alteracoes feitas anteriormente
+ let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
+ let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
+
+ putStrLn "Partidas Rodada 09:"
+ print jogo41
+ print jogo42
+ print jogo43
+ print jogo44
+ print jogo45
+ putStrLn ""
+
+ putStrLn "----------------------------------------------- Rodada 09 -----------------------------------------------"
+ -- Imprimindo o grupo de um jeito bem bunitinho
+ putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoA grupoA)
+ putStrLn ""
+ putStrLn "Classificação: GrupoB        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoB grupoB)
+ putStrLn ""
+ -- Metodo para ajudar nas apostas
+ putStrLn "Times vencedores da rodada: "
+ putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+ -- Fim da Rodada 9
 
 
 
+ -- Rodada 10
+-- Jogo 1
+ let vencedoresRodada = []
+ let aux = (realizaJogos (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t1)) timesDoGrupoA timesDoGrupoB))  
+ let jogo46 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
 
 
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
 
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
 
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 2
+ let aux = (realizaJogos (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t2)) timesDoGrupoA timesDoGrupoB))   
+ let jogo47 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ -- Jogo 3
+ let aux = (realizaJogos (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t3)) timesDoGrupoA timesDoGrupoB))   
+ let jogo48 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 4
+ let aux = (realizaJogos (buscaTime (nome (time t8)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t4)) timesDoGrupoA timesDoGrupoB))   
+ let jogo49 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+-- Jogo 5
+ let aux = (realizaJogos (buscaTime (nome (time t9)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB))   
+ let jogo50 = (fst (fst (fst aux))) -- String com print do jogo "Time1 x Time2"
+ let aux2 = snd aux -- Tupla de gols do jogo (golsTime1, golsTime2)
+ 
+ let auxVencedores = vencedoresRodada
+ let vencedoresRodada = addToList (snd (fst (fst aux))) timeNULL aux2 auxVencedores -- Lista de times vencedores da rodada
+
+ let novotimeV = atualizaTimeVencedor (snd (fst (fst aux))) (fst aux2) -- Atualizando o time vencedor
+ let novotimeP = atualizaTimePerdedor (snd (fst aux)) (snd aux2)  -- Atualizando o time perdedor
+
+ -- Atualizando os dois times se empataram
+ let novotimeE1 = atualizaTimeEmpate (snd (fst (fst aux))) (fst aux2)
+ let novotimeE2 = atualizaTimeEmpate (snd (fst aux)) (snd aux2)
+
+ let novosTimes = verificaResultado aux2 novotimeV novotimeP novotimeE1 novotimeE2
+ 
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = atualizaGrupoA (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = atualizaGrupoB (snd novosTimes) aux
+
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = setTime (snd novosTimes) aux
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (fst novosTimes) aux
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = setTime (snd novosTimes) aux
+
+ -- Ordenando o grupo pelos pontos de cada time
+ let aux = timesDoGrupoA
+ let timesDoGrupoA = reverse (sortBy ordenaGrupo aux)
+
+ let aux = timesDoGrupoB
+ let timesDoGrupoB = reverse (sortBy ordenaGrupo aux)
+
+ -- Atualizando o time no grupo com as alteracoes feitas anteriormente
+ let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
+ let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
+
+ putStrLn "Partidas Rodada 10:"
+ print jogo46
+ print jogo47
+ print jogo48
+ print jogo49
+ print jogo50
+ putStrLn ""
+
+ putStrLn "----------------------------------------------- Rodada 10 -----------------------------------------------"
+ -- Imprimindo o grupo de um jeito bem bunitinho
+ putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoA grupoA)
+ putStrLn ""
+ putStrLn "Classificação: GrupoB        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
+ putStrLn (imprimeGrupoB grupoB)
+ putStrLn ""
+ -- Metodo para ajudar nas apostas
+ putStrLn "Times vencedores da rodada: "
+ putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+ -- Fim da Rodada 10
+ 
+ let classificadosSemiFinal = getClassificadosSemifinal timesDoGrupoA timesDoGrupoB 
+ putStrLn "Classificados para semifinal:"
+ putStrLn ((nome (time (fst(fst classificadosSemiFinal)))) ++ " | " ++ (nome (time (snd(fst classificadosSemiFinal)))) ++ " | " ++ (nome (time (fst(snd classificadosSemiFinal)))) ++ " | " ++ (nome (time (snd(snd classificadosSemiFinal)))))
