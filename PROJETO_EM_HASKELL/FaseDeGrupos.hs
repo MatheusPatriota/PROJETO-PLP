@@ -4,6 +4,32 @@ import System.IO.Unsafe
 
 main :: IO()
 
+
+--Transferencias
+geraValorAleatorioT :: Int -> Int
+geraValorAleatorioT x = unsafePerformIO (randomRIO (0,x))
+
+data Jogador = Jogador{
+ nomeJogador :: String,
+ posicaoJogador :: String,
+ valorJogador :: Int,
+ ataqueJogador :: Int,
+ controleJogador :: Int,
+ defesaJogador :: Int
+} deriving (Show)
+
+jogadorAleatorio :: [Jogador] -> Jogador
+jogadorAleatorio lista = lista!!(geraValorAleatorioT ((length lista) - 1))
+
+timeAleatorio :: [Time] -> Time
+timeAleatorio lista = lista!!(geraValorAleatorioT ((length lista) - 1))
+
+removeJogador :: [Jogador] -> Jogador -> [Jogador]
+removeJogador [] _ = []
+removeJogador (primeiro:resto) individuo
+ | (nomeJogador individuo) == (nomeJogador primeiro) = resto
+ | otherwise = [primeiro] ++ (removeJogador resto individuo)
+
 -- Funcoes de calculo de gols de um jogo de dois times
 toInt :: Float -> Int
 toInt x = round x
@@ -294,12 +320,12 @@ main = do
 
  let capital = seleciona opcao
 
- putStr "Seu capital inicial será de: " 
+ putStr "Seu capital inicial sera de: " 
  print capital
 
  -- Time so pra deixar default na constante AUX
- let timeLuiggy = Time "LuiggyFC" 99 99 99 99 99
- let timeNULL   = TimeDeGrupo timeLuiggy 0 0 0 0 0 0
+ let timeDefault = Time "Default" 99 99 99 99 99
+ let timeNULL   = TimeDeGrupo timeDefault 0 0 0 0 0 0
  let aux        = timeNULL
  let aux2 = 0;
  let auxVencedores = []
@@ -311,11 +337,32 @@ main = do
  let botafogo   = Time "Botafogo-PB"       80 76 81 78 100
  let atletico   = Time "Atletico-PB"       58 61 62 59 100
  let souza      = Time "Souza"             63 65 65 68 100
- let naciconal  = Time "Nacional de Patos" 59 60 45 61 100
+ let nacional  = Time "Nacional de Patos" 59 60 45 61 100
  let serrano    = Time "Serrano"           48 50 56 52 100
  let perilima   = Time "Perilima"          46 50 59 46 100
  let esporte    = Time "Esporte de Patos"  57 62 61 57 100
  let csp        = Time "CSP"               64 66 69 65 100
+
+ let timesTransferencias = [campinense, treze, botafogo, atletico, souza, nacional, serrano, perilima, esporte, csp]
+
+ --Criando Jogadores
+ let j1 = Jogador "xulipa" "zagueiro" 15000 2 5 7 
+ let j2 = Jogador "fininn" "zagueiro" 25000 3 6 9 
+ let j3 = Jogador "lago" "zagueiro" 12000 1 3 6 
+ let j4 = Jogador "genivaldo" "zagueiro" 8000 2 2 4 
+ let j5 = Jogador "patrao" "zagueiro" 19000 3 4 10 
+ let j6 = Jogador "chefe" "atacante" 19000 7 4 1 
+ let j7 = Jogador "tibers" "atacante" 21000 8 4 3 
+ let j8 = Jogador "biu" "atacante" 12000 7 3 1 
+ let j9 = Jogador "silva" "atacante" 25000 7 6 1 
+ let j10 = Jogador "mofi" "atacante" 9000 5 2 1 
+ let j11 = Jogador "lima" "meio-campista" 9000 2 6 2 
+ let j12 = Jogador "lulu" "meio-campista" 15000 3 7 3 
+ let j13 = Jogador "jj" "meio-campista" 11000 3 6 2 
+ let j14 = Jogador "pedrao" "meio-campista" 22000 5 10 3 
+ let j15 = Jogador "moreira" "meio-campista" 20000 6 9 3
+
+ let jogadores = [j1, j10, j6, j4, j5, j3, j7, j8, j15, j2, j12, j11, j9, j14, j13]
  
  -- Criando times de grupo com seus atributos
  let time1  = TimeDeGrupo campinense 0 0 0 0 0 0
@@ -323,7 +370,7 @@ main = do
  let time3  = TimeDeGrupo botafogo   0 0 0 0 0 0
  let time4  = TimeDeGrupo atletico   0 0 0 0 0 0
  let time5  = TimeDeGrupo souza      0 0 0 0 0 0
- let time6  = TimeDeGrupo naciconal  0 0 0 0 0 0 
+ let time6  = TimeDeGrupo nacional  0 0 0 0 0 0 
  let time7  = TimeDeGrupo serrano    0 0 0 0 0 0 
  let time8  = TimeDeGrupo perilima   0 0 0 0 0 0
  let time9  = TimeDeGrupo esporte    0 0 0 0 0 0
@@ -355,6 +402,25 @@ main = do
  let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
 
 -- Rodada 1
+
+ let primeiraTransferencia = jogadorAleatorio jogadores
+ let timePrimeiraTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux primeiraTransferencia
+
+ let segundaTransferencia = jogadorAleatorio jogadores
+ let timeSegundaTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux segundaTransferencia
+ 
+ putStrLn ""
+ putStrLn "Mercado de Transferencias "
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador primeiraTransferencia) ++ " se transferiu para " ++ (nome timePrimeiraTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador primeiraTransferencia)) ++ ".00")
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador segundaTransferencia) ++ " se transferiu para " ++ (nome timeSegundaTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador segundaTransferencia)) ++ ".00")
+ putStrLn ""
+
 -- Jogo 1
  let aux = (realizaJogos (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB)) 
  let jogo1 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
@@ -530,7 +596,7 @@ main = do
  let auxA = time1:[]
 
  putStrLn "" 
- print "O usuario gostaria de realizar a primeira aposta? "
+ print "O usuario gostaria de realizar a segunda aposta? "
  print "se sim, digite o nome do time, caso contrario tecle Enter" 
  putStrLn "" 
  time2 <- getLine
@@ -540,7 +606,7 @@ main = do
 
  let auxTimesApostados = verificaStringsVazias aux
 
- print "Você apostou nos times: "
+ print "Voce apostou nos times: "
  print auxTimesApostados
  putStrLn ""
 
@@ -577,7 +643,7 @@ main = do
  let capital = vencedores vTotal auxCapital auxTimesApostados
  
 
- print "Seu Capital Total após a primeira Rodada é de "
+ print "Seu Capital Total apos a primeira Rodada e de "
  print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
@@ -757,7 +823,7 @@ main = do
  let auxA = time1:[]
 
  putStrLn "" 
- print "O usuario gostaria de realizar a primeira aposta? "
+ print "O usuario gostaria de realizar a segunda aposta? "
  print "se sim, digite o nome do time, caso contrario tecle Enter" 
  putStrLn "" 
  time2 <- getLine
@@ -767,7 +833,7 @@ main = do
 
  let auxTimesApostados = verificaStringsVazias aux
 
- print "Você apostou nos times: "
+ print "Voce apostou nos times: "
  print auxTimesApostados
  putStrLn ""
 
@@ -803,7 +869,7 @@ main = do
  let capital = vencedores vTotal auxCapital auxTimesApostados
  
 
- print "Seu Capital Total após a Segunda Rodada é de "
+ print "Seu Capital Total apos a Segunda Rodada e de "
  print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
@@ -989,7 +1055,7 @@ main = do
  let auxA = time1:[]
 
  putStrLn "" 
- print "O usuario gostaria de realizar a primeira aposta? "
+ print "O usuario gostaria de realizar a segunda aposta? "
  print "se sim, digite o nome do time, caso contrario tecle Enter" 
  putStrLn "" 
  time2 <- getLine
@@ -999,7 +1065,7 @@ main = do
 
  let auxTimesApostados = verificaStringsVazias aux
 
- print "Você apostou nos times: "
+ print "Voce apostou nos times: "
  print auxTimesApostados
  putStrLn ""
 
@@ -1031,13 +1097,31 @@ main = do
  let capital = vencedores vTotal auxCapital auxTimesApostados
  
 
- print "Seu Capital Total após a Terceira Rodada é de "
+ print "Seu Capital Total apos a Terceira Rodada e de "
  print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
  -- Fim da Rodada 3
 
 -- Rodada 4
+
+ let primeiraTransferencia = jogadorAleatorio jogadores
+ let timePrimeiraTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux primeiraTransferencia
+
+ let segundaTransferencia = jogadorAleatorio jogadores
+ let timeSegundaTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux segundaTransferencia
+ 
+ putStrLn ""
+ putStrLn "Mercado de Transferencias "
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador primeiraTransferencia) ++ " se transferiu para " ++ (nome timePrimeiraTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador primeiraTransferencia)) ++ ".00")
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador segundaTransferencia) ++ " se transferiu para " ++ (nome timeSegundaTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador segundaTransferencia)) ++ ".00")
+ putStrLn ""
+
 -- Jogo 1
  let vencedoresRodada = []
  let aux = (realizaJogos (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB)) 
@@ -1216,7 +1300,7 @@ main = do
  let auxA = time1:[]
 
  putStrLn "" 
- print "O usuario gostaria de realizar a primeira aposta? "
+ print "O usuario gostaria de realizar a segunda aposta? "
  print "se sim, digite o nome do time, caso contrario tecle Enter" 
  putStrLn "" 
  time2 <- getLine
@@ -1226,7 +1310,7 @@ main = do
 
  let auxTimesApostados = verificaStringsVazias aux
 
- print "Você apostou nos times: "
+ print "Voce apostou nos times: "
  print auxTimesApostados
  putStrLn ""
 
@@ -1257,7 +1341,7 @@ main = do
  let capital = vencedores vTotal auxCapital auxTimesApostados
  
 
- print "Seu Capital Total após a Quarta Rodada é de "
+ print "Seu Capital Total apos a Quarta Rodada e de "
  print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
@@ -1265,6 +1349,26 @@ main = do
 
 
 -- Rodada 5
+
+ let primeiraTransferencia = jogadorAleatorio jogadores
+ let timePrimeiraTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux primeiraTransferencia
+
+ let segundaTransferencia = jogadorAleatorio jogadores
+ let timeSegundaTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux segundaTransferencia
+
+ putStrLn ""
+ putStrLn "Mercado de Transferencias "
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador primeiraTransferencia) ++ " se transferiu para " ++ (nome timePrimeiraTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador primeiraTransferencia)) ++ ".00")
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador segundaTransferencia) ++ " se transferiu para " ++ (nome timeSegundaTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador segundaTransferencia)) ++ ".00")
+ putStrLn ""
+
+
 -- Jogo 1
  let vencedoresRodada = []
  let aux = (realizaJogos (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB))  
@@ -1444,7 +1548,7 @@ main = do
  let auxA = time1:[]
 
  putStrLn "" 
- print "O usuario gostaria de realizar a primeira aposta? "
+ print "O usuario gostaria de realizar a segunda aposta? "
  print "se sim, digite o nome do time, caso contrario tecle Enter" 
  putStrLn "" 
  time2 <- getLine
@@ -1454,7 +1558,7 @@ main = do
 
  let auxTimesApostados = verificaStringsVazias aux
 
- print "Você apostou nos times: "
+ print "Voce apostou nos times: "
  print auxTimesApostados
  putStrLn ""
 
@@ -1485,7 +1589,7 @@ main = do
  let capital = vencedores vTotal auxCapital auxTimesApostados
  
 
- print "Seu Capital Total após a Quinta Rodada é de "
+ print "Seu Capital Total apos a Quinta Rodada e de "
  print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
@@ -1493,6 +1597,26 @@ main = do
 
 
  -- Rodada 6
+
+
+ let primeiraTransferencia = jogadorAleatorio jogadores
+ let timePrimeiraTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux primeiraTransferencia
+
+ let segundaTransferencia = jogadorAleatorio jogadores
+ let timeSegundaTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux segundaTransferencia
+ 
+ putStrLn ""
+ putStrLn "Mercado de Transferencias "
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador primeiraTransferencia) ++ " se transferiu para " ++ (nome timePrimeiraTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador primeiraTransferencia)) ++ ".00")
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador segundaTransferencia) ++ " se transferiu para " ++ (nome timeSegundaTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador segundaTransferencia)) ++ ".00")
+ putStrLn ""
+
 -- Jogo 1
  let vencedoresRodada = []
  let aux = (realizaJogos (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB))  
@@ -1672,7 +1796,7 @@ main = do
  let auxA = time1:[]
 
  putStrLn "" 
- print "O usuario gostaria de realizar a primeira aposta? "
+ print "O usuario gostaria de realizar a segunda aposta? "
  print "se sim, digite o nome do time, caso contrario tecle Enter" 
  putStrLn "" 
  time2 <- getLine
@@ -1682,7 +1806,7 @@ main = do
 
  let auxTimesApostados = verificaStringsVazias aux
 
- print "Você apostou nos times: "
+ print "Voce apostou nos times: "
  print auxTimesApostados
  putStrLn ""
 
@@ -1713,7 +1837,7 @@ main = do
  let capital = vencedores vTotal auxCapital auxTimesApostados
  
 
- print "Seu Capital Total após a Sexta Rodada é de "
+ print "Seu Capital Total apos a Sexta Rodada e de "
  print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
@@ -1900,7 +2024,7 @@ main = do
  let auxA = time1:[]
 
  putStrLn "" 
- print "O usuario gostaria de realizar a primeira aposta? "
+ print "O usuario gostaria de realizar a segunda aposta? "
  print "se sim, digite o nome do time, caso contrario tecle Enter" 
  putStrLn "" 
  time2 <- getLine
@@ -1910,7 +2034,7 @@ main = do
 
  let auxTimesApostados = verificaStringsVazias aux
 
- print "Você apostou nos times: "
+ print "Voce apostou nos times: "
  print auxTimesApostados
  putStrLn ""
 
@@ -1941,7 +2065,7 @@ main = do
  let capital = vencedores vTotal auxCapital auxTimesApostados
  
 
- print "Seu Capital Total após a Setima Rodada é de "
+ print "Seu Capital Total apos a Setima Rodada e de "
  print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
@@ -2129,7 +2253,7 @@ main = do
  let auxA = time1:[]
 
  putStrLn "" 
- print "O usuario gostaria de realizar a primeira aposta? "
+ print "O usuario gostaria de realizar a segunda aposta? "
  print "se sim, digite o nome do time, caso contrario tecle Enter" 
  putStrLn "" 
  time2 <- getLine
@@ -2139,7 +2263,7 @@ main = do
 
  let auxTimesApostados = verificaStringsVazias aux
 
- print "Você apostou nos times: "
+ print "Voce apostou nos times: "
  print auxTimesApostados
  putStrLn ""
 
@@ -2170,7 +2294,7 @@ main = do
  let capital = vencedores vTotal auxCapital auxTimesApostados
  
 
- print "Seu Capital Total após a Oitava Rodada é de "
+ print "Seu Capital Total apos a Oitava Rodada e de "
  print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
@@ -2358,7 +2482,7 @@ main = do
  let auxA = time1:[]
 
  putStrLn "" 
- print "O usuario gostaria de realizar a primeira aposta? "
+ print "O usuario gostaria de realizar a segunda aposta? "
  print "se sim, digite o nome do time, caso contrario tecle Enter" 
  putStrLn "" 
  time2 <- getLine
@@ -2368,7 +2492,7 @@ main = do
 
  let auxTimesApostados = verificaStringsVazias aux
 
- print "Você apostou nos times: "
+ print "Voce apostou nos times: "
  print auxTimesApostados
  putStrLn ""
 
@@ -2399,7 +2523,7 @@ main = do
  let capital = vencedores vTotal auxCapital auxTimesApostados
  
 
- print "Seu Capital Total após a Nona Rodada é de "
+ print "Seu Capital Total apos a Nona Rodada e de "
  print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
@@ -2587,7 +2711,7 @@ main = do
  let auxA = time1:[]
 
  putStrLn "" 
- print "O usuario gostaria de realizar a primeira aposta? "
+ print "O usuario gostaria de realizar a segunda aposta? "
  print "se sim, digite o nome do time, caso contrario tecle Enter" 
  putStrLn "" 
  time2 <- getLine
@@ -2597,7 +2721,7 @@ main = do
 
  let auxTimesApostados = verificaStringsVazias aux
 
- print "Você apostou nos times: "
+ print "Voce apostou nos times: "
  print auxTimesApostados
  putStrLn ""
 
@@ -2628,7 +2752,7 @@ main = do
  let capital = vencedores vTotal auxCapital auxTimesApostados
  
 
- print "Seu Capital Total após a Decima Rodada é de "
+ print "Seu Capital Total apos a Decima Rodada e de "
  print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
@@ -2638,5 +2762,5 @@ main = do
  putStrLn "Classificados para semifinal:"
  putStrLn ((nome (time (fst(fst classificadosSemiFinal)))) ++ " | " ++ (nome (time (snd(fst classificadosSemiFinal)))) ++ " | " ++ (nome (time (fst(snd classificadosSemiFinal)))) ++ " | " ++ (nome (time (snd(snd classificadosSemiFinal)))))
 
- putStr "Saldo total das Apostas está em: "
+ putStr "Saldo total das Apostas esta em: "
  print capital
