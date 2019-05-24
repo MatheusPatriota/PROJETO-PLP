@@ -2,8 +2,35 @@ module FaseDeGrupos where
 
 import System.Random
 import Data.List
+import System.IO.Unsafe
 
 main :: IO()
+
+
+--Transferencias
+geraValorAleatorioT :: Int -> Int
+geraValorAleatorioT x = unsafePerformIO (randomRIO (0,x))
+
+data Jogador = Jogador{
+ nomeJogador :: String,
+ posicaoJogador :: String,
+ valorJogador :: Int,
+ ataqueJogador :: Int,
+ controleJogador :: Int,
+ defesaJogador :: Int
+} deriving (Show)
+
+jogadorAleatorio :: [Jogador] -> Jogador
+jogadorAleatorio lista = lista!!(geraValorAleatorioT ((length lista) - 1))
+
+timeAleatorio :: [Time] -> Time
+timeAleatorio lista = lista!!(geraValorAleatorioT ((length lista) - 1))
+
+removeJogador :: [Jogador] -> Jogador -> [Jogador]
+removeJogador [] _ = []
+removeJogador (primeiro:resto) individuo
+ | (nomeJogador individuo) == (nomeJogador primeiro) = resto
+ | otherwise = [primeiro] ++ (removeJogador resto individuo)
 
 -- Funcoes de calculo de gols de um jogo de dois times
 toInt :: Float -> Int
@@ -12,8 +39,11 @@ toInt x = round x
 somatorio :: Time -> Int
 somatorio timeT = (ataque timeT) + (defesa timeT) + (controle timeT) + (confianca timeT) + (condicao timeT)
 
+geraValorAleatorio :: Int -> Int
+geraValorAleatorio x = x + unsafePerformIO (randomRIO (-x,x))
+
 auxCalculoDeForca :: Int -> Int
-auxCalculoDeForca x = toInt(((fromIntegral x) * 0.7)  * 0.01)
+auxCalculoDeForca x = geraValorAleatorio (toInt(((fromIntegral x) * 0.7)  * 0.01))
 
 calculoDeForca :: Time -> Time -> (Int, Int)
 calculoDeForca timeA timeB = do
@@ -21,6 +51,32 @@ calculoDeForca timeA timeB = do
     let y = auxCalculoDeForca (somatorio timeB)
     (x, y)
 -- Fim das funcoes de calculo de gols
+
+
+--Metodos responsáveis pelas apostas
+vencedoresDaRodada :: [String] -> Int -> String -> Int
+vencedoresDaRodada [] x y = (-500)
+vencedoresDaRodada (p:px) x y 
+    |p == y = (650)
+    |otherwise = (vencedoresDaRodada px x y)
+
+
+vencedores :: [String] -> Int -> [String] -> Int
+vencedores (p:px) x [] = x
+vencedores (p:px) x (c:cx) = (vencedores (p:px) x cx) + (vencedoresDaRodada (p:px) x c)
+
+seleciona :: String -> Int
+seleciona opcao  
+ | opcao == "s" = 2000 + unsafePerformIO ( (readLn:: IO Int))
+ | otherwise = 2000
+
+
+verificaStringsVazias :: [String] -> [String]
+verificaStringsVazias [] = []
+verificaStringsVazias (p:px)
+    |p == "" = verificaStringsVazias px
+    |otherwise = [p] ++ verificaStringsVazias px
+--Fim dos metodos responsáveis pelas apostas
 
 -- Metodo que cria um lista de tamanho N com numero aleatorios entre 0 e 9
 randomList :: Int -> IO([Int])
@@ -259,25 +315,56 @@ addToList time timeNulo gols lista
 -- Main de testes
 main = do
  
+ putStrLn "Bem Vindo ao simulador do Campeonato Paraibano de Futebol 2019"
+ putStrLn ""
+ putStrLn "Deseja aumentar o capital das apostas? (s/n) "
+ opcao <- getLine
+
+ let capital = seleciona opcao
+
+ putStr "Seu capital inicial sera de: " 
+ print capital
+
  -- Time so pra deixar default na constante AUX
- let timeLuiggy = Time "LuiggyFC" 99 99 99 99 99
- let timeNULL   = TimeDeGrupo timeLuiggy 0 0 0 0 0 0
+ let timeDefault = Time "Default" 99 99 99 99 99
+ let timeNULL   = TimeDeGrupo timeDefault 0 0 0 0 0 0
  let aux        = timeNULL
  let aux2 = 0;
  let auxVencedores = []
  let vencedoresRodada = []
  
  -- Criando times com seus atributos
- let campinense = Time "Campinense"        70 20 40 70 80
- let treze      = Time "Treze"             80 40 30 20 90
- let botafogo   = Time "Botafogo-PB"       90 90 10 40 70
- let atletico   = Time "Atletico-PB"       10 40 20 60 10
- let souza      = Time "Souza"             60 20 50 40 20
- let naciconal  = Time "Nacional de Patos" 40 40 80 80 40
- let serrano    = Time "Serrano"           90 80 70 90 60
- let perilima   = Time "Perilima"          20 60 60 70 50
- let esporte    = Time "Esporte de Patos"  70 30 40 20 70
- let csp        = Time "CSP"               50 80 50 30 40
+ let campinense = Time "Campinense"        77 72 77 76 100
+ let treze      = Time "Treze"             73 70 74 72 100
+ let botafogo   = Time "Botafogo-PB"       80 76 81 78 100
+ let atletico   = Time "Atletico-PB"       58 61 62 59 100
+ let souza      = Time "Souza"             63 65 65 68 100
+ let nacional  = Time "Nacional de Patos" 59 60 45 61 100
+ let serrano    = Time "Serrano"           48 50 56 52 100
+ let perilima   = Time "Perilima"          46 50 59 46 100
+ let esporte    = Time "Esporte de Patos"  57 62 61 57 100
+ let csp        = Time "CSP"               64 66 69 65 100
+
+ let timesTransferencias = [campinense, treze, botafogo, atletico, souza, nacional, serrano, perilima, esporte, csp]
+
+ --Criando Jogadores
+ let j1 = Jogador "xulipa" "zagueiro" 15000 2 5 7 
+ let j2 = Jogador "fininn" "zagueiro" 25000 3 6 9 
+ let j3 = Jogador "lago" "zagueiro" 12000 1 3 6 
+ let j4 = Jogador "genivaldo" "zagueiro" 8000 2 2 4 
+ let j5 = Jogador "patrao" "zagueiro" 19000 3 4 10 
+ let j6 = Jogador "chefe" "atacante" 19000 7 4 1 
+ let j7 = Jogador "tibers" "atacante" 21000 8 4 3 
+ let j8 = Jogador "biu" "atacante" 12000 7 3 1 
+ let j9 = Jogador "silva" "atacante" 25000 7 6 1 
+ let j10 = Jogador "mofi" "atacante" 9000 5 2 1 
+ let j11 = Jogador "lima" "meio-campista" 9000 2 6 2 
+ let j12 = Jogador "lulu" "meio-campista" 15000 3 7 3 
+ let j13 = Jogador "jj" "meio-campista" 11000 3 6 2 
+ let j14 = Jogador "pedrao" "meio-campista" 22000 5 10 3 
+ let j15 = Jogador "moreira" "meio-campista" 20000 6 9 3
+
+ let jogadores = [j1, j10, j6, j4, j5, j3, j7, j8, j15, j2, j12, j11, j9, j14, j13]
  
  -- Criando times de grupo com seus atributos
  let time1  = TimeDeGrupo campinense 0 0 0 0 0 0
@@ -285,7 +372,7 @@ main = do
  let time3  = TimeDeGrupo botafogo   0 0 0 0 0 0
  let time4  = TimeDeGrupo atletico   0 0 0 0 0 0
  let time5  = TimeDeGrupo souza      0 0 0 0 0 0
- let time6  = TimeDeGrupo naciconal  0 0 0 0 0 0 
+ let time6  = TimeDeGrupo nacional  0 0 0 0 0 0 
  let time7  = TimeDeGrupo serrano    0 0 0 0 0 0 
  let time8  = TimeDeGrupo perilima   0 0 0 0 0 0
  let time9  = TimeDeGrupo esporte    0 0 0 0 0 0
@@ -317,6 +404,25 @@ main = do
  let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
 
 -- Rodada 1
+
+ let primeiraTransferencia = jogadorAleatorio jogadores
+ let timePrimeiraTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux primeiraTransferencia
+
+ let segundaTransferencia = jogadorAleatorio jogadores
+ let timeSegundaTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux segundaTransferencia
+ 
+ putStrLn ""
+ putStrLn "Mercado de Transferencias "
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador primeiraTransferencia) ++ " se transferiu para " ++ (nome timePrimeiraTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador primeiraTransferencia)) ++ ".00")
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador segundaTransferencia) ++ " se transferiu para " ++ (nome timeSegundaTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador segundaTransferencia)) ++ ".00")
+ putStrLn ""
+
 -- Jogo 1
  let aux = (realizaJogos (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB)) 
  let jogo1 = fst (fst (fst aux)) -- String com print do jogo "Time1 x Time2"
@@ -484,6 +590,28 @@ main = do
  print jogo5
  putStrLn  ""
 
+
+ print "O usuario gostaria de realizar a primeira aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter"
+ putStrLn "" 
+ time1 <- getLine
+ let auxA = time1:[]
+
+ putStrLn "" 
+ print "O usuario gostaria de realizar a segunda aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter" 
+ putStrLn "" 
+ time2 <- getLine
+ let auxB = time2:[]
+
+ let aux = auxA ++ auxB
+
+ let auxTimesApostados = verificaStringsVazias aux
+
+ print "Voce apostou nos times: "
+ print auxTimesApostados
+ putStrLn ""
+
  -- Atualizando o time no grupo com as alteracoes feitas anteriormente
  let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
  let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
@@ -500,6 +628,25 @@ main = do
  -- Metodo para ajudar nas apostas
  putStrLn "Times vencedores da rodada: "
  putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+ 
+
+ let v1 = (nome (time (vencedoresRodada!!0)))
+ let v2 = (nome (time (vencedoresRodada!!1)))
+ let v3 = (nome (time (vencedoresRodada!!2)))
+ let v4 = (nome (time (vencedoresRodada!!3)))
+ let v5 = (nome (time (vencedoresRodada!!4)))
+
+ let vTotal = [v1] ++ [v2] ++ [v3] ++ [v4] ++ [v5]
+
+ let auxCapital = capital
+
+ let capital = vencedores vTotal auxCapital auxTimesApostados
+ 
+
+ print "Seu Capital Total apos a primeira Rodada e de "
+ print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
  -- Fim da Rodada 1
@@ -671,6 +818,27 @@ main = do
  print jogo10
  putStrLn ""
 
+ print "O usuario gostaria de realizar a primeira aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter"
+ putStrLn "" 
+ time1 <- getLine
+ let auxA = time1:[]
+
+ putStrLn "" 
+ print "O usuario gostaria de realizar a segunda aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter" 
+ putStrLn "" 
+ time2 <- getLine
+ let auxB = time2:[]
+
+ let aux = auxA ++ auxB
+
+ let auxTimesApostados = verificaStringsVazias aux
+
+ print "Voce apostou nos times: "
+ print auxTimesApostados
+ putStrLn ""
+
  -- Atualizando o time no grupo com as alteracoes feitas anteriormente
  let grupoA = GrupoA (timesDoGrupoA!!0) (timesDoGrupoA!!1) (timesDoGrupoA!!2) (timesDoGrupoA!!3) (timesDoGrupoA!!4)
  let grupoB = GrupoB (timesDoGrupoB!!0) (timesDoGrupoB!!1) (timesDoGrupoB!!2) (timesDoGrupoB!!3) (timesDoGrupoB!!4)
@@ -687,6 +855,24 @@ main = do
  -- Metodo para ajudar nas apostas
  putStrLn "Times vencedores da rodada: "
  putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+
+ let v1 = (nome (time (vencedoresRodada!!0)))
+ let v2 = (nome (time (vencedoresRodada!!1)))
+ let v3 = (nome (time (vencedoresRodada!!2)))
+ let v4 = (nome (time (vencedoresRodada!!3)))
+ let v5 = (nome (time (vencedoresRodada!!4)))
+
+ let vTotal = [v1] ++ [v2] ++ [v3] ++ [v4] ++ [v5]
+
+ let auxCapital = capital
+
+ let capital = vencedores vTotal auxCapital auxTimesApostados
+ 
+
+ print "Seu Capital Total apos a Segunda Rodada e de "
+ print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
  -- Fim da Rodada 2
@@ -863,6 +1049,28 @@ main = do
  print jogo15
  putStrLn ""
 
+
+ print "O usuario gostaria de realizar a primeira aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter"
+ putStrLn "" 
+ time1 <- getLine
+ let auxA = time1:[]
+
+ putStrLn "" 
+ print "O usuario gostaria de realizar a segunda aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter" 
+ putStrLn "" 
+ time2 <- getLine
+ let auxB = time2:[]
+
+ let aux = auxA ++ auxB
+
+ let auxTimesApostados = verificaStringsVazias aux
+
+ print "Voce apostou nos times: "
+ print auxTimesApostados
+ putStrLn ""
+
  putStrLn "----------------------------------------------- Rodada 03 -----------------------------------------------"
  -- Imprimindo o grupo de um jeito bem bunitinho
  putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
@@ -877,9 +1085,45 @@ main = do
  putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
+
+ let v1 = (nome (time (vencedoresRodada!!0)))
+ let v2 = (nome (time (vencedoresRodada!!1)))
+ let v3 = (nome (time (vencedoresRodada!!2)))
+ let v4 = (nome (time (vencedoresRodada!!3)))
+ let v5 = (nome (time (vencedoresRodada!!4)))
+
+ let vTotal = [v1] ++ [v2] ++ [v3] ++ [v4] ++ [v5]
+
+ let auxCapital = capital
+
+ let capital = vencedores vTotal auxCapital auxTimesApostados
+ 
+
+ print "Seu Capital Total apos a Terceira Rodada e de "
+ print capital
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
  -- Fim da Rodada 3
 
 -- Rodada 4
+
+ let primeiraTransferencia = jogadorAleatorio jogadores
+ let timePrimeiraTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux primeiraTransferencia
+
+ let segundaTransferencia = jogadorAleatorio jogadores
+ let timeSegundaTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux segundaTransferencia
+ 
+ putStrLn ""
+ putStrLn "Mercado de Transferencias "
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador primeiraTransferencia) ++ " se transferiu para " ++ (nome timePrimeiraTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador primeiraTransferencia)) ++ ".00")
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador segundaTransferencia) ++ " se transferiu para " ++ (nome timeSegundaTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador segundaTransferencia)) ++ ".00")
+ putStrLn ""
+
 -- Jogo 1
  let vencedoresRodada = []
  let aux = (realizaJogos (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t7)) timesDoGrupoA timesDoGrupoB)) 
@@ -1050,6 +1294,28 @@ main = do
  print jogo20
  putStrLn ""
 
+
+ print "O usuario gostaria de realizar a primeira aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter"
+ putStrLn "" 
+ time1 <- getLine
+ let auxA = time1:[]
+
+ putStrLn "" 
+ print "O usuario gostaria de realizar a segunda aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter" 
+ putStrLn "" 
+ time2 <- getLine
+ let auxB = time2:[]
+
+ let aux = auxA ++ auxB
+
+ let auxTimesApostados = verificaStringsVazias aux
+
+ print "Voce apostou nos times: "
+ print auxTimesApostados
+ putStrLn ""
+
  putStrLn "----------------------------------------------- Rodada 04 -----------------------------------------------"
  -- Imprimindo o grupo de um jeito bem bunitinho
  putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
@@ -1063,10 +1329,48 @@ main = do
  putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
+
+ let v1 = (nome (time (vencedoresRodada!!0)))
+ let v2 = (nome (time (vencedoresRodada!!1)))
+ let v3 = (nome (time (vencedoresRodada!!2)))
+ let v4 = (nome (time (vencedoresRodada!!3)))
+ let v5 = (nome (time (vencedoresRodada!!4)))
+
+ let vTotal = [v1] ++ [v2] ++ [v3] ++ [v4] ++ [v5]
+
+ let auxCapital = capital
+
+ let capital = vencedores vTotal auxCapital auxTimesApostados
+ 
+
+ print "Seu Capital Total apos a Quarta Rodada e de "
+ print capital
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
  -- Fim da Rodada 4
 
 
 -- Rodada 5
+
+ let primeiraTransferencia = jogadorAleatorio jogadores
+ let timePrimeiraTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux primeiraTransferencia
+
+ let segundaTransferencia = jogadorAleatorio jogadores
+ let timeSegundaTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux segundaTransferencia
+
+ putStrLn ""
+ putStrLn "Mercado de Transferencias "
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador primeiraTransferencia) ++ " se transferiu para " ++ (nome timePrimeiraTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador primeiraTransferencia)) ++ ".00")
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador segundaTransferencia) ++ " se transferiu para " ++ (nome timeSegundaTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador segundaTransferencia)) ++ ".00")
+ putStrLn ""
+
+
 -- Jogo 1
  let vencedoresRodada = []
  let aux = (realizaJogos (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t6)) timesDoGrupoA timesDoGrupoB))  
@@ -1238,6 +1542,28 @@ main = do
  print jogo25
  putStrLn ""
 
+
+ print "O usuario gostaria de realizar a primeira aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter"
+ putStrLn "" 
+ time1 <- getLine
+ let auxA = time1:[]
+
+ putStrLn "" 
+ print "O usuario gostaria de realizar a segunda aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter" 
+ putStrLn "" 
+ time2 <- getLine
+ let auxB = time2:[]
+
+ let aux = auxA ++ auxB
+
+ let auxTimesApostados = verificaStringsVazias aux
+
+ print "Voce apostou nos times: "
+ print auxTimesApostados
+ putStrLn ""
+
  putStrLn "----------------------------------------------- Rodada 05 -----------------------------------------------"
  -- Imprimindo o grupo de um jeito bem bunitinho
  putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
@@ -1251,10 +1577,48 @@ main = do
  putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
+
+ let v1 = (nome (time (vencedoresRodada!!0)))
+ let v2 = (nome (time (vencedoresRodada!!1)))
+ let v3 = (nome (time (vencedoresRodada!!2)))
+ let v4 = (nome (time (vencedoresRodada!!3)))
+ let v5 = (nome (time (vencedoresRodada!!4)))
+
+ let vTotal = [v1] ++ [v2] ++ [v3] ++ [v4] ++ [v5]
+
+ let auxCapital = capital
+
+ let capital = vencedores vTotal auxCapital auxTimesApostados
+ 
+
+ print "Seu Capital Total apos a Quinta Rodada e de "
+ print capital
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
  -- Fim da Rodada 5
 
 
  -- Rodada 6
+
+
+ let primeiraTransferencia = jogadorAleatorio jogadores
+ let timePrimeiraTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux primeiraTransferencia
+
+ let segundaTransferencia = jogadorAleatorio jogadores
+ let timeSegundaTrasferencia = timeAleatorio timesTransferencias
+ let aux = jogadores
+ let jogadores = removeJogador aux segundaTransferencia
+ 
+ putStrLn ""
+ putStrLn "Mercado de Transferencias "
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador primeiraTransferencia) ++ " se transferiu para " ++ (nome timePrimeiraTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador primeiraTransferencia)) ++ ".00")
+ putStrLn ("O " ++ (posicaoJogador primeiraTransferencia) ++ " " ++ (nomeJogador segundaTransferencia) ++ " se transferiu para " ++ (nome timeSegundaTrasferencia) ++ " em uma transação de R$ " ++ (show (valorJogador segundaTransferencia)) ++ ".00")
+ putStrLn ""
+
 -- Jogo 1
  let vencedoresRodada = []
  let aux = (realizaJogos (buscaTime (nome (time t5)) timesDoGrupoA timesDoGrupoB) (buscaTime (nome (time t0)) timesDoGrupoA timesDoGrupoB))  
@@ -1426,6 +1790,28 @@ main = do
  print jogo30
  putStrLn ""
 
+
+ print "O usuario gostaria de realizar a primeira aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter"
+ putStrLn "" 
+ time1 <- getLine
+ let auxA = time1:[]
+
+ putStrLn "" 
+ print "O usuario gostaria de realizar a segunda aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter" 
+ putStrLn "" 
+ time2 <- getLine
+ let auxB = time2:[]
+
+ let aux = auxA ++ auxB
+
+ let auxTimesApostados = verificaStringsVazias aux
+
+ print "Voce apostou nos times: "
+ print auxTimesApostados
+ putStrLn ""
+
  putStrLn "----------------------------------------------- Rodada 06 -----------------------------------------------"
  -- Imprimindo o grupo de um jeito bem bunitinho
  putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
@@ -1437,6 +1823,24 @@ main = do
  -- Metodo para ajudar nas apostas
  putStrLn "Times vencedores da rodada: "
  putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+
+ let v1 = (nome (time (vencedoresRodada!!0)))
+ let v2 = (nome (time (vencedoresRodada!!1)))
+ let v3 = (nome (time (vencedoresRodada!!2)))
+ let v4 = (nome (time (vencedoresRodada!!3)))
+ let v5 = (nome (time (vencedoresRodada!!4)))
+
+ let vTotal = [v1] ++ [v2] ++ [v3] ++ [v4] ++ [v5]
+
+ let auxCapital = capital
+
+ let capital = vencedores vTotal auxCapital auxTimesApostados
+ 
+
+ print "Seu Capital Total apos a Sexta Rodada e de "
+ print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
  -- Fim da Rodada 6
@@ -1614,6 +2018,28 @@ main = do
  print jogo35
  putStrLn ""
 
+
+ print "O usuario gostaria de realizar a primeira aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter"
+ putStrLn "" 
+ time1 <- getLine
+ let auxA = time1:[]
+
+ putStrLn "" 
+ print "O usuario gostaria de realizar a segunda aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter" 
+ putStrLn "" 
+ time2 <- getLine
+ let auxB = time2:[]
+
+ let aux = auxA ++ auxB
+
+ let auxTimesApostados = verificaStringsVazias aux
+
+ print "Voce apostou nos times: "
+ print auxTimesApostados
+ putStrLn ""
+
  putStrLn "----------------------------------------------- Rodada 07 -----------------------------------------------"
  -- Imprimindo o grupo de um jeito bem bunitinho
  putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
@@ -1625,6 +2051,24 @@ main = do
  -- Metodo para ajudar nas apostas
  putStrLn "Times vencedores da rodada: "
  putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+
+ let v1 = (nome (time (vencedoresRodada!!0)))
+ let v2 = (nome (time (vencedoresRodada!!1)))
+ let v3 = (nome (time (vencedoresRodada!!2)))
+ let v4 = (nome (time (vencedoresRodada!!3)))
+ let v5 = (nome (time (vencedoresRodada!!4)))
+
+ let vTotal = [v1] ++ [v2] ++ [v3] ++ [v4] ++ [v5]
+
+ let auxCapital = capital
+
+ let capital = vencedores vTotal auxCapital auxTimesApostados
+ 
+
+ print "Seu Capital Total apos a Setima Rodada e de "
+ print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
  -- Fim da Rodada 7
@@ -1803,6 +2247,28 @@ main = do
  print jogo40
  putStrLn ""
 
+
+ print "O usuario gostaria de realizar a primeira aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter"
+ putStrLn "" 
+ time1 <- getLine
+ let auxA = time1:[]
+
+ putStrLn "" 
+ print "O usuario gostaria de realizar a segunda aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter" 
+ putStrLn "" 
+ time2 <- getLine
+ let auxB = time2:[]
+
+ let aux = auxA ++ auxB
+
+ let auxTimesApostados = verificaStringsVazias aux
+
+ print "Voce apostou nos times: "
+ print auxTimesApostados
+ putStrLn ""
+
  putStrLn "----------------------------------------------- Rodada 08 -----------------------------------------------"
  -- Imprimindo o grupo de um jeito bem bunitinho
  putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
@@ -1814,6 +2280,24 @@ main = do
  -- Metodo para ajudar nas apostas
  putStrLn "Times vencedores da rodada: "
  putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+
+ let v1 = (nome (time (vencedoresRodada!!0)))
+ let v2 = (nome (time (vencedoresRodada!!1)))
+ let v3 = (nome (time (vencedoresRodada!!2)))
+ let v4 = (nome (time (vencedoresRodada!!3)))
+ let v5 = (nome (time (vencedoresRodada!!4)))
+
+ let vTotal = [v1] ++ [v2] ++ [v3] ++ [v4] ++ [v5]
+
+ let auxCapital = capital
+
+ let capital = vencedores vTotal auxCapital auxTimesApostados
+ 
+
+ print "Seu Capital Total apos a Oitava Rodada e de "
+ print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
  -- Fim da Rodada 8
@@ -1992,6 +2476,28 @@ main = do
  print jogo45
  putStrLn ""
 
+
+ print "O usuario gostaria de realizar a primeira aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter"
+ putStrLn "" 
+ time1 <- getLine
+ let auxA = time1:[]
+
+ putStrLn "" 
+ print "O usuario gostaria de realizar a segunda aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter" 
+ putStrLn "" 
+ time2 <- getLine
+ let auxB = time2:[]
+
+ let aux = auxA ++ auxB
+
+ let auxTimesApostados = verificaStringsVazias aux
+
+ print "Voce apostou nos times: "
+ print auxTimesApostados
+ putStrLn ""
+
  putStrLn "----------------------------------------------- Rodada 09 -----------------------------------------------"
  -- Imprimindo o grupo de um jeito bem bunitinho
  putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
@@ -2003,6 +2509,24 @@ main = do
  -- Metodo para ajudar nas apostas
  putStrLn "Times vencedores da rodada: "
  putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
+
+ let v1 = (nome (time (vencedoresRodada!!0)))
+ let v2 = (nome (time (vencedoresRodada!!1)))
+ let v3 = (nome (time (vencedoresRodada!!2)))
+ let v4 = (nome (time (vencedoresRodada!!3)))
+ let v5 = (nome (time (vencedoresRodada!!4)))
+
+ let vTotal = [v1] ++ [v2] ++ [v3] ++ [v4] ++ [v5]
+
+ let auxCapital = capital
+
+ let capital = vencedores vTotal auxCapital auxTimesApostados
+ 
+
+ print "Seu Capital Total apos a Nona Rodada e de "
+ print capital
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
  -- Fim da Rodada 9
@@ -2181,6 +2705,28 @@ main = do
  print jogo50
  putStrLn ""
 
+
+ print "O usuario gostaria de realizar a primeira aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter"
+ putStrLn "" 
+ time1 <- getLine
+ let auxA = time1:[]
+
+ putStrLn "" 
+ print "O usuario gostaria de realizar a segunda aposta? "
+ print "se sim, digite o nome do time, caso contrario tecle Enter" 
+ putStrLn "" 
+ time2 <- getLine
+ let auxB = time2:[]
+
+ let aux = auxA ++ auxB
+
+ let auxTimesApostados = verificaStringsVazias aux
+
+ print "Voce apostou nos times: "
+ print auxTimesApostados
+ putStrLn ""
+
  putStrLn "----------------------------------------------- Rodada 10 -----------------------------------------------"
  -- Imprimindo o grupo de um jeito bem bunitinho
  putStrLn "Classificação: GrupoA        Pontos      Jogos       Vitorias        Empates         Derrotas        Gols"
@@ -2194,8 +2740,29 @@ main = do
  putStrLn ((nome (time (vencedoresRodada!!0))) ++ " | " ++ (nome (time (vencedoresRodada!!1))) ++ " | " ++ (nome (time (vencedoresRodada!!2))) ++ " | " ++ (nome (time (vencedoresRodada!!3))) ++ " | " ++ (nome (time (vencedoresRodada!!4))))
  putStrLn "---------------------------------------------------------------------------------------------------------"
  putStrLn ""
+
+ let v1 = (nome (time (vencedoresRodada!!0)))
+ let v2 = (nome (time (vencedoresRodada!!1)))
+ let v3 = (nome (time (vencedoresRodada!!2)))
+ let v4 = (nome (time (vencedoresRodada!!3)))
+ let v5 = (nome (time (vencedoresRodada!!4)))
+
+ let vTotal = [v1] ++ [v2] ++ [v3] ++ [v4] ++ [v5]
+
+ let auxCapital = capital
+
+ let capital = vencedores vTotal auxCapital auxTimesApostados
+ 
+
+ print "Seu Capital Total apos a Decima Rodada e de "
+ print capital
+ putStrLn "---------------------------------------------------------------------------------------------------------"
+ putStrLn ""
  -- Fim da Rodada 10
  
  let classificadosSemiFinal = getClassificadosSemifinal timesDoGrupoA timesDoGrupoB 
  putStrLn "Classificados para semifinal:"
  putStrLn ((nome (time (fst(fst classificadosSemiFinal)))) ++ " | " ++ (nome (time (snd(fst classificadosSemiFinal)))) ++ " | " ++ (nome (time (fst(snd classificadosSemiFinal)))) ++ " | " ++ (nome (time (snd(snd classificadosSemiFinal)))))
+
+ putStr "Saldo total das Apostas esta em: "
+ print capital
