@@ -31,9 +31,9 @@ semiFinal times saldo = do
 
  --Faz as apostas
  putStr("Aposta1?: ")
- aposta1 <- readLn :: IO Int
+ aposta1 <- getLine
  putStr("Aposta2?: ")
- aposta2 <- readLn :: IO Int
+ aposta2 <- getLine
 
  --armazena a partida "A" e da "B"
  let jogoIdaA = calculoDeForca (timeSF(fst timesA)) (timeSF(snd timesA))
@@ -113,7 +113,7 @@ final times saldo = do
  putStrLn("\n Deseja Apostar ? Se sim, digite o numero correspondente ao time(1 ou 2), se nao digite qualquer outro numero.\n")
  --Faz as apostas
  putStr("Aposta para a Final?: ")
- aposta1 <- readLn :: IO Int
+ aposta1 <- getLine
  --Realiza os jogos de ida e volta
  let jogoIda = calculoDeForca (timeSF(fst times)) (timeSF(snd times))
  let jogoVolta = calculoDeForca (timeSF(fst times)) (timeSF(snd times)) 
@@ -145,8 +145,8 @@ final times saldo = do
  putStrLn("\n---------Seu valor final em caixa eh de: " ++ show(caixa) ++" moedas\n")
  
 getGanhador :: (TimeSemiEFinais,TimeSemiEFinais)-> TimeSemiEFinais
-getGanhador (time1,time2)	| (golsSF time1) > (golsSF time2) = time1
-							|otherwise = time2
+getGanhador (time1,time2) | (golsSF time1) > (golsSF time2) = time1
+ |otherwise = time2
 
 
 atPtTimesPartida :: (TimeSemiEFinais,TimeSemiEFinais) -> [(Int,Int)] -> (TimeSemiEFinais,TimeSemiEFinais)
@@ -185,17 +185,17 @@ statusPartida (time1,time2) =  "\n" ++ "---------- 1 " ++  validaString (nome(ti
 ---faz a partida 
 partidaPrint :: (TimeSemiEFinais,TimeSemiEFinais) -> Int -> [(Int,Int)] -> String
 --O inteiro passado representa o estágio da competicao, 1 ida, 2 volta
-partidaPrint (time1,time2) 1 ((pt1,pt2):xs) = statusPartida(time1,time2) ++ " (Jogo de ida)Time " ++ nome(timeSF time1) ++ " joga em casa.\n\n" ++ " 1 " ++  validaString (nome(timeSF time1)) 17 ++ "( " ++ show(pt1) ++ " )     ( " ++ show(pt2) ++ " ) " ++ validaString(nome(timeSF time2)) 17 ++ " 2 \n\n" ++ partidaPrint (time1,time2) 2 xs
-partidaPrint (time1,time2) 2 ((pt1,pt2):xs) = " (Jogo de volta)Time " ++ nome(timeSF time2) ++ " joga em casa.\n\n" ++ " 1 " ++  validaString (nome(timeSF time1)) 17 ++ "( " ++ show(pt1) ++ " )     ( " ++ show(pt2) ++ " ) " ++ validaString(nome(timeSF time2)) 17 ++ " 2 "
+partidaPrint (time1,time2) 1 ((pt1,pt2):xs) = statusPartida(time1,time2) ++ " (Jogo de ida)Time " ++ nome(timeSF time1) ++ " joga em casa.\n\n" ++ " 1 " ++  validaString (nome(timeSF time1)) 17 ++ "( " ++ show(pt1) ++ " )  ( " ++ show(pt2) ++ " ) " ++ validaString(nome(timeSF time2)) 17 ++ " 2 \n\n" ++ partidaPrint (time1,time2) 2 xs
+partidaPrint (time1,time2) 2 ((pt1,pt2):xs) = " (Jogo de volta)Time " ++ nome(timeSF time2) ++ " joga em casa.\n\n" ++ " 1 " ++  validaString (nome(timeSF time1)) 17 ++ "( " ++ show(pt1) ++ " )  ( " ++ show(pt2) ++ " ) " ++ validaString(nome(timeSF time2)) 17 ++ " 2 "
 
 
 penaltisPartida :: (TimeSemiEFinais,TimeSemiEFinais) -> (Int,Int) -> (Int) -> IO (Int,Int)
-penaltisPartida (time1,time2) placar rodada 	| (golsSF time1) /= (golsSF time2) && rodada == 0 = return (0,0)
-												| rodada > 5 && (fst placar) /= (snd placar) = return placar 
-												| otherwise  = do
-													penalti1 <- batePenalti time1
-													penalti2 <-  batePenalti time2
-													penaltisPartida (time1,time2) ((fst placar + penalti1), (snd placar + penalti2)) (rodada + 1)
+penaltisPartida (time1,time2) placar rodada | (golsSF time1) /= (golsSF time2) && rodada == 0 = return (0,0)
+ | rodada > 5 && (fst placar) /= (snd placar) = return placar 
+ | otherwise  = do
+   penalti1 <- batePenalti time1
+   penalti2 <-  batePenalti time2
+   penaltisPartida (time1,time2) ((fst placar + penalti1), (snd placar + penalti2)) (rodada + 1)
 
 
 
@@ -211,30 +211,30 @@ numAleatorio = randomRIO (40,180 :: Int)
 --- bate o penalti
 batePenalti :: TimeSemiEFinais -> IO Int
 batePenalti time  =  do  
-					numaleatorio <- numAleatorio
-					moeda <- jogaMoeda
-					if numaleatorio  < ((ataque(timeSF(time))) + (defesa(timeSF(time)))) && moeda == 1 
-						then  return 1
-						else return 0
+ numaleatorio <- numAleatorio
+ moeda <- jogaMoeda
+ if numaleatorio  < ((ataque(timeSF(time))) + (defesa(timeSF(time)))) && moeda == 1 
+  then  return 1
+  else return 0
 
 
 printPenaltis :: (TimeSemiEFinais,TimeSemiEFinais) -> (Int,Int) -> String
 printPenaltis (time1, time2) (0,0) = "\n -----Vitoria decisiva----- \n -------Sem penaltis-------\n"
-printPenaltis (time1, time2) placar = "\n ---Partida de penaltis---- \n\n" ++ "   " ++ validaString (nome (timeSF time1)) 17 ++ "( " ++ show(fst(placar)) ++ " )     ( " ++  show(snd(placar)) ++ " ) " ++ validaString (nome (timeSF time2)) 17 ++ "\n ----------------------------------"
+printPenaltis (time1, time2) placar = "\n ---Partida de penaltis---- \n\n" ++ "   " ++ validaString (nome (timeSF time1)) 17 ++ "( " ++ show(fst(placar)) ++ " )  ( " ++  show(snd(placar)) ++ " ) " ++ validaString (nome (timeSF time2)) 17 ++ "\n ----------------------------------"
 
 
-verficaAposta :: (TimeSemiEFinais,TimeSemiEFinais) -> Int -> Int
-verficaAposta (time1,time2) aposta 	| golsSF time1 > golsSF time2 && aposta == 1 = 100
-									| golsSF time1 > golsSF time2 && aposta == 2 = -100
-									| golsSF time1 < golsSF time2 && aposta == 2 = 100
-									| golsSF time1 < golsSF time2 && aposta == 1 = -100
-									|otherwise = 0
+verficaAposta :: (TimeSemiEFinais,TimeSemiEFinais) -> String -> Int
+verficaAposta (time1,time2) aposta | golsSF time1 > golsSF time2 && aposta == "1" =  650
+ | golsSF time1 > golsSF time2 && aposta == "2" = - 500
+ | golsSF time1 < golsSF time2 && aposta == "2" =  650
+ | golsSF time1 < golsSF time2 && aposta == "1" = - 500
+ |otherwise = 0
 
 
 printAposta :: Int -> String
-printAposta valor	| valor > 0 = "\n Você ganhou " ++ show(valor) ++ " moedas na aposta.\n"
-					| valor < 0 = "\n Você perdeu " ++ show(abs valor) ++ " moedas na aposta.\n" 
-					|otherwise = "\n Você não apostou!\n"
+printAposta valor | valor > 0 = "\n Você adicionou " ++ show(valor) ++ " ao seu capital.\n"
+ | valor < 0 = "\n Você perdeu " ++ show(abs valor) ++ " do seu capital.\n" 
+ |otherwise = "\n Você não apostou!\n"
 
 
 ---Essas funcoes serao uteis na hora de juntar as partes, a funcao abaixo cria um time do tipo 
