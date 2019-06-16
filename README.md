@@ -27,7 +27,7 @@ por padrão o time da casa tem direito a 70% do estádio enquanto o visitante te
 - Implementado em Prolog [aqui](https://github.com/MatheusPatriota/PROJETO-PLP/tree/master/PROJETO_EM_PROLOG)
 
 
-##Desenvolvedores
+## Desenvolvedores
 
 - [Matheus Patriota](https://github.com/MatheusPatriota)
 
