@@ -14,3 +14,6 @@ Ao final do campeonato, é declarado o time vencedor e o valor acumulado pelo us
 CÁLCULO DE FORÇA DO TIME:
 (((ATAQUE + DEFESA + CONTROLE DE JOGO + CONFIANÇA DA EQUIPE + DISPOSIÇÃO FÍSICA) * 0,7) + (TORCIDA * 0,3)) * 0,01
 por padrão o time da casa tem direito a 70% do estádio enquanto o visitante tem direito a 30%. porém essa capacidade será preenchida de acordo com o momento do time no campeonato.
+
+
+![C](https://img.shields.io/badge/C%2B%2B-Done-blue.svg) ![Haskell](https://img.shields.io/badge/C%2B%2B-Done-blue.svg ) ![ProLog](https://img.shields.io/badge/Haskell-In%20Process-%23FE2E2E.svg)
