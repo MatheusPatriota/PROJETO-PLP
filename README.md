@@ -16,4 +16,4 @@ CÁLCULO DE FORÇA DO TIME:
 por padrão o time da casa tem direito a 70% do estádio enquanto o visitante tem direito a 30%. porém essa capacidade será preenchida de acordo com o momento do time no campeonato.
 
 
-![C](https://img.shields.io/badge/C%2B%2B-Done-blue.svg) ![Haskell](https://img.shields.io/badge/Haskell%2B%2B-Done-blue.svg ) ![ProLog](https://img.shields.io/badge/Prolog-In%20Process-%23FE2E2E.svg)
+![C](https://img.shields.io/badge/C%2B%2B-Done-blue.svg) ![Haskell](https://img.shields.io/badge/Haskell-Done-blue.svg ) ![ProLog](https://img.shields.io/badge/Prolog-In%20Process-%23FE2E2E.svg)
