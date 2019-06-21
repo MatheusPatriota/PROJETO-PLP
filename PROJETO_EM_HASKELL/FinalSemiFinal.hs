@@ -4,7 +4,7 @@ import EstruturaDoTime
 import System.Random (randomRIO)
 import System.IO.Unsafe
 
-----Estrutura de um time na semifinal, nao esquece r----
+----Estrutura de um time na semifinal, nao esquecer----
 
 data TimeSemiEFinais = TimeSemiEFinais {
  timeSF :: Time,
