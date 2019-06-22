@@ -1,7 +1,4 @@
-
-
 % timeSF(NumTime,PtTime).
-
 
 getPtSF(NumTime,Pts):-
 timeSF(NumTime,PtTime).
@@ -28,11 +25,6 @@ partidaPenaltis(Time1,Time2),
 partidaSemiFinal(Time3,Time4),
 partidaSemiFinal(Time4,Time3),
 partidaPenaltis(Time3,Time4).
-
-
-
-
-
 
 
 
