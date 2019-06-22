@@ -2,7 +2,7 @@
 
 ![C++](https://img.shields.io/badge/C%2B%2B-Done-success.svg) 
 ![Haskell](https://img.shields.io/badge/Haskell-Done-success.svg) 
-![Prolog](https://img.shields.io/badge/Prolog-In%20Process-yellow.svg)
+![Prolog](https://img.shields.io/badge/Prolog-In%20Process-yellow.svg) 
 
 
 ## Descrição do Projeto
