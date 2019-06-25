@@ -71,6 +71,12 @@ getCaixa(Saida):-
 caixaUsuario(Saida).
 
 
+imprime:-
+time(NUM,_,_, _, _, _, _),
+write(NUM),nl,
+fail.
+
+
 :- dynamic caixaUsuario/1.
 :- dynamic time/7.
 
