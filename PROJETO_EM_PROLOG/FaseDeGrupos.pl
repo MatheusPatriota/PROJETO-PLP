@@ -1,5 +1,64 @@
 :- initialization(main).
 
+caixaUsuario(1200).
+
+
+getNome(NumTime,Saida):-
+time(NumTime,Saida,_,_,_,_,_).
+
+getAtaque(NumTime,Saida):-
+time(NumTime,_,Saida,_,_,_,_).
+
+getDefesa(NumTime,Saida):-
+time(NumTime,_,_,Saida,_,_,_).
+
+getControle(NumTime,Saida):-
+time(NumTime,_,_,_,Saida,_,_).
+
+
+getConfianca(NumTime,Saida):-
+time(NumTime,_,_,_,_,Saida,_).
+
+getCondicao(NumTime,Saida):-
+time(NumTime,_,_,_,_,_,Saida).
+
+getTdsAtributos(NumTime,Atk,Def,Contrl,Confi,Condic):-
+time(NumTime,_,Atk,Def,Contrl,Confi,Condic).
+
+getSumAtributos(NumTime,Saida):-
+time(NumTime,_,Atk,Def,Control,Confi,Condic),
+Saida is (Atk + Def + Control +  Confi + Condic).
+
+
+setAtaque(NumTime,AtkNovo):-
+retract(time(NumTime,Nome,_,Def,Control,Confian,Condicao)),
+assert(time(NumTime,Nome,AtkNovo,Def,Control,Confian,Condicao)).
+
+setDefesa(NumTime,DefNova):-
+retract(time(NumTime,Nome,Atk,_,Control,Confian,Condicao)),
+assert(time(NumTime,Nome,Atk,DefNova,Control,Confian,Condicao)).
+
+setControle(NumTime,ControlNovo):-
+retract(time(NumTime,Nome,Atk,Def,_,Confian,Condicao)),
+assert(time(NumTime,Nome,Atk,Def,ControlNovo,Confian,Condicao)).
+
+setConfianca(NumTime,ConfiNova):-
+retract(time(NumTime,Nome,Atk,Def,Control,_,Condicao)),
+assert(time(NumTime,Nome,Atk,Def,Control,ConfiNova,Condicao)).
+
+setCodicao(NumTime,CondiNova):-
+retract(time(NumTime,Nome,Atk,Def,Control,Confi,_)),
+assert(time(NumTime,Nome,Atk,Def,Control,Confi,CondiNova)).
+
+
+setCaixa(Valor):-
+retract(caixaUsuario(_)),
+assert(caixaUsuario(Valor)).
+
+getCaixa(Saida):-
+caixaUsuario(Saida).
+
+
 % TIME( ID , NOME, ATQUE, DEFESA, CONTROLE, CONFIANCA, CONDICAO )
 time(1, 'Campinense', 77, 72, 77, 76, 100).
 time(2, 'Treze', 73, 70, 74, 72, 100).
@@ -55,9 +114,114 @@ retract(timeDeGrupo(TIME_ID,PONTOS,PARTIDAS,VITORIAS,EMPATES,DERROTAS,GOLS)),
 NEWPARTIDAS is PARTIDAS + 1, NEWDERROTAS is DERROTAS + 1, NEWGOLS is GOLS + GOLS_FEITOS,
 assert(timeDeGrupo(TIME_ID,PONTOS,NEWPARTIDAS,VITORIAS,EMPATES,NEWDERROTAS,NEWGOLS)).
 
+
+
+% TIMEDEGRUPO( TIME_ID , PONTOS , PARTIDAS , VITORIAS , EMPATES , DERROTAS , GOLS )
+
+getPontos(Time,Pontos):-
+timeDeGrupo(Time ,Pontos,_,_,_,_,_).
+
+getPartidas(Time,Partida):-
+timeDeGrupo(Time ,_,Partida,_,_,_,_).
+
+getVitorias(Time,Vitorias):-
+timeDeGrupo(Time ,_,_,Vitorias,_,_,_).
+
+
+getEmpates(Time,Empates):-
+timeDeGrupo(Time ,_,_,_,Empates,_,_).
+
+getDerrotas(Time,Derrotas):-
+timeDeGrupo(Time ,_,_,_,_,Derrotas,_).
+
+
+getGols(Time,Gols):-
+timeDeGrupo(Time ,_,_,_,_,_,Gols).
+
+
+
+
+
 :- dynamic grupoA/5.
 :- dynamic grupoB/5.
 :- dynamic timeDeGrupo/7.
+:- dynamic vencedoresDaRodada/5.
+
+vencedoresDaRodada('','','','','').
+
+setVencedoresDaRodada(Time1,Time2,Time3,Time4,Time5,Time6,Time7,Time8,Time9,Time10):- 
+partidaFaseGrupos(Time1,Time2,Result1),
+partidaFaseGrupos(Time3,Time4,Result2),
+partidaFaseGrupos(Time5,Time6,Result3),
+partidaFaseGrupos(Time7,Time8,Result4),
+partidaFaseGrupos(Time9,Time10,Result5),
+retract(vencedoresDaRodada(_,_,_,_,_)),
+assert(vencedoresDaRodada(Result1,Result2,Result3,Result4,Result5)).
+
+
+partidaFaseGrupos(Time1,Time2,Resultado):-
+getNome(Time1,Nome1),
+getNome(Time2,Nome2),
+write(Nome1),write(' x '),write(Nome2),
+random(0,5,Pts1),
+random(0,5,Pts2),
+verificaResultado(Time1,Time2,Pts1,Pts2,Resultado).
+
+
+verificaResultado(Time1,Time2,Pts1,Pts2,Time1):-
+Pts1 > Pts2,
+setTimeVencedor(Time1,Pts1),
+setTimePerdedor(Time2,Pts2).
+
+
+verificaResultado(Time1,Time2,Pts1,Pts2,Time2):-
+Pts1 < Pts2,
+setTimeVencedor(Time2,Pts2),
+setTimePerdedor(Time1,Pts1).
+
+
+verificaResultado(Time1,Time2,Pts1,Pts2,''):-
+Pts1 == Pts2,
+setTimeEmpates(Time1,Pts1),
+setTimeEmpates(Time2,Pts2).
+
+
+imprimeGrupoA :-
+grupoA(Time1,Time2,Time3,Time4,Time5),
+write('Posicao GrupoA: Nome Pontos Partidas Vitorias Empates Derrotas Gols'),nl,
+showTime(Time1),
+showTime(Time2),
+showTime(Time3),
+showTime(Time4),
+showTime(Time5).
+
+
+
+imprimeGrupoB :-
+grupoB(Time1,Time2,Time3,Time4,Time5),
+write('Posicao GrupoB: Nome Pontos Partidas Vitorias Empates Derrotas Gols'),nl,
+showTime(Time1),
+showTime(Time2),
+showTime(Time3),
+showTime(Time4),
+showTime(Time5).
+
+
+
+
+showTime(TIME_ID):-
+getNome(TIME_ID,Nome),
+getPontos(TIME_ID,Pontos),
+getPartidas(TIME_ID,Partidas),
+getVitorias(TIME_ID,Vitorias),
+getEmpates(TIME_ID,Empates),
+getDerrotas(TIME_ID,Derrotas),
+getGols(TIME_ID, Gols),
+write(0),write('º '),write(Nome),write(' '),write(Pontos),write(' '),write(Partidas),write(' '),write(Vitorias),write(' '),write(Empates),write(' '),write(Derrotas),write(' '),write(Gols),nl.
+
+
+
+
 
 % string_concat('Opa', 'Porra', X)
 main :-
