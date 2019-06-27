@@ -89,130 +89,153 @@ timeDeGrupo(10 ,0,0,0,0,0,0).
 grupoA(-1,-1,-1,-1,-1).
 grupoB(-1,-1,-1,-1,-1).
 
-setGrupos() :- indices([T1|[T2|[T3|[T4|[T5|[T6|[T7|[T8|[T9|[T10|_]]]]]]]]]]),
-setGrupoA(T1,T2,T3,T4,T5), setGrupoB(T6,T7,T8,T9,T10).
+setGrupos() :- 
+	indices([T1|[T2|[T3|[T4|[T5|[T6|[T7|[T8|[T9|[T10|_]]]]]]]]]]),
+	setGrupoA(T1,T2,T3,T4,T5), setGrupoB(T6,T7,T8,T9,T10).
 
 setGrupoA(T1,T2,T3,T4,T5):-
-retract(grupoA(-1,_,_,_,_)),
-assert(grupoA(T1,T2,T3,T4,T5)).
+	retract(grupoA(-1,_,_,_,_)),
+	assert(grupoA(T1,T2,T3,T4,T5)).
 
 setGrupoB(T1,T2,T3,T4,T5):-
-retract(grupoB(-1,_,_,_,_)),
-assert(grupoB(T1,T2,T3,T4,T5)).
+	retract(grupoB(-1,_,_,_,_)),
+	assert(grupoB(T1,T2,T3,T4,T5)).
 
 setTimeVencedor(TIME_ID, GOLS_FEITOS) :- 
-retract(timeDeGrupo(TIME_ID,PONTOS,PARTIDAS,VITORIAS,EMPATES,DERROTAS,GOLS)),
-NEWPONTOS is PONTOS + 3, NEWPARTIDAS is PARTIDAS + 1, NEWVITORIAS is VITORIAS + 1, NEWGOLS is GOLS + GOLS_FEITOS,
-assert(timeDeGrupo(TIME_ID,NEWPONTOS,NEWPARTIDAS,NEWVITORIAS,EMPATES,DERROTAS,NEWGOLS)).
+	retract(timeDeGrupo(TIME_ID,PONTOS,PARTIDAS,VITORIAS,EMPATES,DERROTAS,GOLS)),
+	NEWPONTOS is PONTOS + 3, NEWPARTIDAS is PARTIDAS + 1, NEWVITORIAS is VITORIAS + 1, NEWGOLS is GOLS + GOLS_FEITOS,
+	assert(timeDeGrupo(TIME_ID,NEWPONTOS,NEWPARTIDAS,NEWVITORIAS,EMPATES,DERROTAS,NEWGOLS)).
 
 setTimeEmpates(TIME_ID, GOLS_FEITOS) :- 
-retract(timeDeGrupo(TIME_ID,PONTOS,PARTIDAS,VITORIAS,EMPATES,DERROTAS,GOLS)),
-NEWPONTOS is PONTOS + 1, NEWPARTIDAS is PARTIDAS + 1, NEWEMPATES is EMPATES + 1, NEWGOLS is GOLS + GOLS_FEITOS,
-assert(timeDeGrupo(TIME_ID,NEWPONTOS,NEWPARTIDAS,VITORIAS,NEWEMPATES,DERROTAS,NEWGOLS)).
+	retract(timeDeGrupo(TIME_ID,PONTOS,PARTIDAS,VITORIAS,EMPATES,DERROTAS,GOLS)),
+	NEWPONTOS is PONTOS + 1, NEWPARTIDAS is PARTIDAS + 1, NEWEMPATES is EMPATES + 1, NEWGOLS is GOLS + GOLS_FEITOS,
+	assert(timeDeGrupo(TIME_ID,NEWPONTOS,NEWPARTIDAS,VITORIAS,NEWEMPATES,DERROTAS,NEWGOLS)).
 
 setTimePerdedor(TIME_ID, GOLS_FEITOS) :- 
-retract(timeDeGrupo(TIME_ID,PONTOS,PARTIDAS,VITORIAS,EMPATES,DERROTAS,GOLS)),
-NEWPARTIDAS is PARTIDAS + 1, NEWDERROTAS is DERROTAS + 1, NEWGOLS is GOLS + GOLS_FEITOS,
-assert(timeDeGrupo(TIME_ID,PONTOS,NEWPARTIDAS,VITORIAS,EMPATES,NEWDERROTAS,NEWGOLS)).
+	retract(timeDeGrupo(TIME_ID,PONTOS,PARTIDAS,VITORIAS,EMPATES,DERROTAS,GOLS)),
+	NEWPARTIDAS is PARTIDAS + 1, NEWDERROTAS is DERROTAS + 1, NEWGOLS is GOLS + GOLS_FEITOS,
+	assert(timeDeGrupo(TIME_ID,PONTOS,NEWPARTIDAS,VITORIAS,EMPATES,NEWDERROTAS,NEWGOLS)).
 
 getPontos(Time,Pontos):-
-timeDeGrupo(Time ,Pontos,_,_,_,_,_).
+	timeDeGrupo(Time ,Pontos,_,_,_,_,_).
 
 getPontosTotal(Time,PontosT):-
-getPontos(Time,Pontos),
-getGols(Time,Gols),
-GolsP is (Gols * 0.01),
-PontosT is Pontos + GolsP.
+	getPontos(Time,Pontos),
+	getGols(Time,Gols),
+	GolsP is (Gols * 0.01),
+	PontosT is Pontos + GolsP.
 
 getPartidas(Time,Partida):-
-timeDeGrupo(Time ,_,Partida,_,_,_,_).
+	timeDeGrupo(Time ,_,Partida,_,_,_,_).
 
 getVitorias(Time,Vitorias):-
-timeDeGrupo(Time ,_,_,Vitorias,_,_,_).
+	timeDeGrupo(Time ,_,_,Vitorias,_,_,_).
 
 getEmpates(Time,Empates):-
-timeDeGrupo(Time ,_,_,_,Empates,_,_).
+	timeDeGrupo(Time ,_,_,_,Empates,_,_).
 
 getDerrotas(Time,Derrotas):-
-timeDeGrupo(Time ,_,_,_,_,Derrotas,_).
+	timeDeGrupo(Time ,_,_,_,_,Derrotas,_).
 
 getGols(Time,Gols):-
-timeDeGrupo(Time ,_,_,_,_,_,Gols).
+	timeDeGrupo(Time ,_,_,_,_,_,Gols).
 
 vencedoresDaRodada('','','','','').
 
 setVencedoresDaRodada(Time1,Time2,Time3,Time4,Time5,Time6,Time7,Time8,Time9,Time10):- 
-partidaFaseGrupos(Time1,Time2,Result1),
-partidaFaseGrupos(Time3,Time4,Result2),
-partidaFaseGrupos(Time5,Time6,Result3),
-partidaFaseGrupos(Time7,Time8,Result4),
-partidaFaseGrupos(Time9,Time10,Result5),
-retract(vencedoresDaRodada(_,_,_,_,_)),
-assert(vencedoresDaRodada(Result1,Result2,Result3,Result4,Result5)).
+	partidaFaseGrupos(Time1,Time2,Result1),
+	partidaFaseGrupos(Time3,Time4,Result2),
+	partidaFaseGrupos(Time5,Time6,Result3),
+	partidaFaseGrupos(Time7,Time8,Result4),
+	partidaFaseGrupos(Time9,Time10,Result5),
+	retract(vencedoresDaRodada(_,_,_,_,_)),
+	assert(vencedoresDaRodada(Result1,Result2,Result3,Result4,Result5)).
 
 partidaFaseGrupos(Time1,Time2,Resultado):-
-getNome(Time1,Nome1),
-getNome(Time2,Nome2),
-write(Nome1),write(' x '),write(Nome2),nl,
-random(0,5,Pts1),
-random(0,5,Pts2),
-verificaResultado(Time1,Time2,Pts1,Pts2,Resultado).
+	getNome(Time1,Nome1),
+	getNome(Time2,Nome2),
+	write(Nome1),write(' x '),write(Nome2),nl,
+	calculoGolsEmCasa(Time1,Pts1),
+	calculoGolsForaCasa(Time2,Pts2),
+	verificaResultado(Time1,Time2,Pts1,Pts2,Resultado).
 
 verificaResultado(Time1,Time2,Pts1,Pts2,Time1):-
-Pts1 > Pts2,
-setTimeVencedor(Time1,Pts1),
-setTimePerdedor(Time2,Pts2).
+	Pts1 > Pts2,
+	setTimeVencedor(Time1,Pts1),
+	setTimePerdedor(Time2,Pts2).
 
 verificaResultado(Time1,Time2,Pts1,Pts2,Time2):-
-Pts1 < Pts2,
-setTimeVencedor(Time2,Pts2),
-setTimePerdedor(Time1,Pts1).
+	Pts1 < Pts2,
+	setTimeVencedor(Time2,Pts2),
+	setTimePerdedor(Time1,Pts1).
 
 verificaResultado(Time1,Time2,Pts1,Pts2,''):-
-Pts1 == Pts2,
-setTimeEmpates(Time1,Pts1),
-setTimeEmpates(Time2,Pts2).
+	Pts1 == Pts2,
+	setTimeEmpates(Time1,Pts1),
+	setTimeEmpates(Time2,Pts2).
 
 imprimeGrupoA :-
-ordenaTimes('A',[Time1,Time2,Time3,Time4,Time5]),
-write('---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------\nClassificacao: GrupoA\nPosicao Nome 			Pontos Partidas Vitorias Empates Derrotas Gols'),nl,
-showTime(Time1,1),
-showTime(Time2,2),
-showTime(Time3,3),
-showTime(Time4,4),
-showTime(Time5,5),
-write('---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------'), nl.
+	ordenaTimes('A',[Time1,Time2,Time3,Time4,Time5]),
+	write('---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------\nClassificacao: GrupoA\nPosicao Nome 			Pontos Partidas Vitorias Empates Derrotas Gols'),nl,
+	showTime(Time1,1),
+	showTime(Time2,2),
+	showTime(Time3,3),
+	showTime(Time4,4),
+	showTime(Time5,5),
+	write('---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------'), nl.
 
 imprimeGrupoB :-
-ordenaTimes('B',[Time1,Time2,Time3,Time4,Time5]),
-write('---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------\nClassificacao: GrupoB\nPosicao Nome 			Pontos Partidas Vitorias Empates Derrotas Gols'),nl,
-showTime(Time1,1),
-showTime(Time2,2),
-showTime(Time3,3),
-showTime(Time4,4),
-showTime(Time5,5),
-write('---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------'), nl.
+	ordenaTimes('B',[Time1,Time2,Time3,Time4,Time5]),
+	write('---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------\nClassificacao: GrupoB\nPosicao Nome 			Pontos Partidas Vitorias Empates Derrotas Gols'),nl,
+	showTime(Time1,1),
+	showTime(Time2,2),
+	showTime(Time3,3),
+	showTime(Time4,4),
+	showTime(Time5,5),
+	write('---------- ---------- ---------- ---------- ---------- ---------- ---------- -----------'), nl.
 
 padronizaString(Texto, TextoNovo, Tamanho) :- string_length(Texto, X), X == Tamanho, TextoNovo = Texto.
 padronizaString(Texto, TextoNovo, Tamanho) :- addSpace(Texto, NewText), padronizaString(NewText, TextoNovo, Tamanho).
 addSpace(Text, NewText) :- string_concat(Text, ' ', NewText). 
 
 showTime(TIME_ID, POS):-
-getNome(TIME_ID,Nome),
-getPontos(TIME_ID,Pontos),
-getPartidas(TIME_ID,Partidas),
-getVitorias(TIME_ID,Vitorias),
-getEmpates(TIME_ID,Empates),
-getDerrotas(TIME_ID,Derrotas),
-getGols(TIME_ID, Gols),
-padronizaString(Nome, NEWNOME, 20),
-padronizaString(Pontos, NEWPONTOS, 2),
-padronizaString(Partidas, NEWPARTIDAS, 2),
-padronizaString(Vitorias, NEWVITORIAS, 2),
-padronizaString(Empates, NEWEMPATES, 2),
-padronizaString(Derrotas, NEWDERROTAS, 2),
-padronizaString(Gols, NEWGOLS, 2),
-write(POS),write('º '),write(NEWNOME),write('	           '),write(NEWPONTOS),write('	  '),write(NEWPARTIDAS),write(' 	   '),write(NEWVITORIAS),write('	    '),write(NEWEMPATES),write('	    '),write(NEWDERROTAS),write('	    '),write(NEWGOLS),nl.
+	getNome(TIME_ID,Nome),
+	getPontos(TIME_ID,Pontos),
+	getPartidas(TIME_ID,Partidas),
+	getVitorias(TIME_ID,Vitorias),
+	getEmpates(TIME_ID,Empates),
+	getDerrotas(TIME_ID,Derrotas),
+	getGols(TIME_ID, Gols),
+	padronizaString(Nome, NEWNOME, 20),
+	padronizaString(Pontos, NEWPONTOS, 2),
+	padronizaString(Partidas, NEWPARTIDAS, 2),
+	padronizaString(Vitorias, NEWVITORIAS, 2),
+	padronizaString(Empates, NEWEMPATES, 2),
+	padronizaString(Derrotas, NEWDERROTAS, 2),
+	padronizaString(Gols, NEWGOLS, 2),
+	write(POS),write('º '),write(NEWNOME),write('	           '),write(NEWPONTOS),write('	  '),write(NEWPARTIDAS),write(' 	   '),write(NEWVITORIAS),write('	    '),write(NEWEMPATES),write('	    '),write(NEWDERROTAS),write('	    '),write(NEWGOLS),nl.
+
+
+calculoGolsEmCasa(Time,Gols):-
+	getSumAtributos(Time,Soma),
+	PesoTorcidaCasa is 0.7,
+	ValorEquilibrio is 0.01,
+	GolsParciaisFloat is Soma * PesoTorcidaCasa * ValorEquilibrio,
+    GolsParciaisInt is round(GolsParciaisFloat),
+	GolsParciaisIntNegativo is (GolsParciaisInt * -1),
+	random(GolsParciaisIntNegativo,GolsParciaisInt,Saida),
+	Gols is GolsParciaisInt + Saida.
+
+
+calculoGolsForaCasa(Time,Gols):-
+	getSumAtributos(Time,Soma),
+	PesoTorcidaCasa is 0.3,
+	ValorEquilibrio is 0.01,
+	GolsParciaisFloat is Soma * PesoTorcidaCasa * ValorEquilibrio,
+	GolsParciaisInt is round(GolsParciaisFloat),
+	GolsParciaisIntNegativo is (GolsParciaisInt * -1),
+	random(GolsParciaisIntNegativo,GolsParciaisInt,Saida),
+	Gols is GolsParciaisInt + Saida.
 
 
 ordenaTimes('A',TimesOrdenados):-
@@ -252,6 +275,9 @@ imprimeVencedoresRodada:-
 	write(Nome3),write(' | '),
 	write(Nome4),write(' | '),
 	write(Nome5),write(' | '),nl.
+
+
+
 
 
 :- dynamic grupoA/5.

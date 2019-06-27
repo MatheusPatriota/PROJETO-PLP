@@ -154,6 +154,7 @@ final(Time1,Time2):-
 	write('Aposta para a Final?:'),
 	read_line_to_string(user_input,Aposta1),nl,
 	partidaSemiFinal(Time1,Time2),
+	partidaSemiFinal(Time2,Time1),
 	partidaPenaltis(Time1,Time2),
 	verificaAposta(Time1,Time2,Aposta1),
 	getGanhadorSF(Time1,Time2,Ganhador1),
@@ -170,13 +171,16 @@ final(Time1,Time2):-
 
 %funcao generica de partida
 partidaSemiFinal(Time1,Time2):-
-	random(0,5,Pts1),
-	random(0,5,Pts2),
+	calculoGolsEmCasa(Time1,Pts1),
+	calculoGolsForaCasa(Time2,Pts2),
 	addPtSF(Time1,Pts1),
 	addPtSF(Time2,Pts2),
-	getNome(Time1,Nome1),getNome(Time2,Nome2),
-	write(Nome1),write(" ( "),write(Pts1),write(" )  ( "),
-	write(Pts2),write(" ) "),write(Nome2),nl,nl.
+	getNome(Time1,Nome1),
+	getNome(Time2,Nome2),
+	padronizaString(Nome1, NEWNOME1, 20),
+	padronizaString(Nome2, NEWNOME2, 20),
+	write(NEWNOME1),write(' ( '),write(Pts1),write(' )  ( '),
+	write(Pts2),write(' ) '),write(NEWNOME2),nl,nl.
 
 
 %verifica se é necessario penaltis joga, e ja atualiza os dados dos times assim como exibe o jogo.
@@ -201,8 +205,10 @@ jogaRecurPenaltis(Rodada,Time1,Time2,Pt1,Pt2):-
 	getNome(Time1,Nome1),getNome(Time2,Nome2),
 	addPtSF(Time1,Pt1),
 	addPtSF(Time2,Pt2),
-	write(Nome1),write(' ( '),write(Pt1),write(' )  ( '),
-	write(Pt2),write(' ) '),write(Nome2),nl.
+	padronizaString(Nome1, NEWNOME1, 20),
+	padronizaString(Nome2, NEWNOME2, 20),
+	write(NEWNOME1),write(' ( '),write(Pt1),write(' )  ( '),
+	write(Pt2),write(' ) '),write(NEWNOME2),nl,nl.
 
 %loop
 jogaRecurPenaltis(Rodada,Time1,Time2,Pt1,Pt2):-
@@ -260,6 +266,36 @@ numAleatorio(X):-
 
 jogaMoeda(X):-
 	random(0,2,X).
+
+
+calculoGolsEmCasa(Time,Gols):-
+	getSumAtributos(Time,Soma),
+	PesoTorcidaCasa is 0.7,
+	ValorEquilibrio is 0.01,
+	GolsParciaisFloat is Soma * PesoTorcidaCasa * ValorEquilibrio,
+    GolsParciaisInt is round(GolsParciaisFloat),
+	GolsParciaisIntNegativo is (GolsParciaisInt * -1),
+	random(GolsParciaisIntNegativo,GolsParciaisInt,Saida),
+	Gols is GolsParciaisInt + Saida.
+
+
+calculoGolsForaCasa(Time,Gols):-
+	getSumAtributos(Time,Soma),
+	PesoTorcidaCasa is 0.3,
+	ValorEquilibrio is 0.01,
+	GolsParciaisFloat is Soma * PesoTorcidaCasa * ValorEquilibrio,
+	GolsParciaisInt is round(GolsParciaisFloat),
+	GolsParciaisIntNegativo is (GolsParciaisInt * -1),
+	random(GolsParciaisIntNegativo,GolsParciaisInt,Saida),
+	Gols is GolsParciaisInt + Saida.
+	
+
+padronizaString(Texto, TextoNovo, Tamanho) :- string_length(Texto, X), X == Tamanho, TextoNovo = Texto.
+padronizaString(Texto, TextoNovo, Tamanho) :- addSpace(Texto, NewText), padronizaString(NewText, TextoNovo, Tamanho).
+addSpace(Text, NewText) :- string_concat(Text, ' ', NewText). 
+
+
+
 
 
 
