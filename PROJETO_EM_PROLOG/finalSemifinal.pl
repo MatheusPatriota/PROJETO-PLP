@@ -290,6 +290,13 @@ calculoGolsForaCasa(Time,Gols):-
 	Gols is GolsParciaisInt + Saida.
 	
 
+makeTimesSF(Time1,Time2,Time3,Time4):-
+assert(timeSF(Time1,0)),
+assert(timeSF(Time1,0)),
+assert(timeSF(Time1,0)),
+assert(timeSF(Time1,0)).
+
+
 padronizaString(Texto, TextoNovo, Tamanho) :- string_length(Texto, X), X == Tamanho, TextoNovo = Texto.
 padronizaString(Texto, TextoNovo, Tamanho) :- addSpace(Texto, NewText), padronizaString(NewText, TextoNovo, Tamanho).
 addSpace(Text, NewText) :- string_concat(Text, ' ', NewText). 

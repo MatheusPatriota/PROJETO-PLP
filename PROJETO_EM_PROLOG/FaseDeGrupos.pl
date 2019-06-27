@@ -56,6 +56,11 @@ setCaixa(Valor):-
 retract(caixaUsuario(_)),
 assert(caixaUsuario(Valor)).
 
+addCaixa(Valor):-
+	getCaixa(ValorAtual),
+	ValorFinal is ValorAtual + Valor,
+	setCaixa(ValorFinal).
+
 getCaixa(Saida):-
 caixaUsuario(Saida).
 
@@ -153,13 +158,13 @@ vencedoresDaRodada('','','','','').
 
 % Regra que realiza uma rodada de jogos entre times
 setVencedoresDaRodada(Time1,Time2,Time3,Time4,Time5,Time6,Time7,Time8,Time9,Time10):- 
-partidaFaseGrupos(Time1,Time2,Result1),
-partidaFaseGrupos(Time3,Time4,Result2),
-partidaFaseGrupos(Time5,Time6,Result3),
-partidaFaseGrupos(Time7,Time8,Result4),
-partidaFaseGrupos(Time9,Time10,Result5),
-retract(vencedoresDaRodada(_,_,_,_,_)),
-assert(vencedoresDaRodada(Result1,Result2,Result3,Result4,Result5)).
+	partidaFaseGrupos(Time1,Time2,Result1),
+	partidaFaseGrupos(Time3,Time4,Result2),
+	partidaFaseGrupos(Time5,Time6,Result3),
+	partidaFaseGrupos(Time7,Time8,Result4),
+	partidaFaseGrupos(Time9,Time10,Result5),
+	retract(vencedoresDaRodada(_,_,_,_,_)),
+	assert(vencedoresDaRodada(Result1,Result2,Result3,Result4,Result5)).
 
 % Regra que mostra e realiza um jogo entre dois times
 
@@ -297,11 +302,73 @@ getClassificados(GA1,GA2,GB1,GB2) :- ordenaTimes('A', [GA1,GA2,_,_,_]),ordenaTim
 getNome(GA1, T1), getNome(GA2, T2), getNome(GB1, T3), getNome(GB2, T4),
 write(T1), write(' | '),write(T2), write(' | '),write(T3), write(' | '),write(T4).
 
+
+verificaApostaRodada(Aposta):-
+Aposta \= "1",
+Aposta \= "2",
+Aposta \= "3",
+Aposta \= "4",
+Aposta \= "5",
+Aposta \= "6",
+Aposta \= "7",
+Aposta \= "8",
+Aposta \= "9",
+Aposta \= "10",
+write('Voce nao apostou!'),nl.
+
+
+verificaApostaRodada(Aposta):-
+vencedoresDaRodada(Time1,_,_,_,_),
+
+number_codes(ApostaAtom,Aposta),
+Time1 == ApostaAtom,addCaixa(600),
+write('Voce ganhou 600 pela aposta.'),nl.
+
+verificaApostaRodada(Aposta):-
+vencedoresDaRodada(_,Time2,_,_,_),
+number_codes(ApostaAtom,Aposta),
+Time2 == ApostaAtom,addCaixa(600),
+write('Voce ganhou 600 pela aposta.'),nl.
+
+verificaApostaRodada(Aposta):-
+vencedoresDaRodada(_,_,Time3,_,_),
+number_codes(ApostaAtom,Aposta),
+Time3 == ApostaAtom,addCaixa(600),
+write('Voce ganhou 600 pela aposta.'),nl.
+
+verificaApostaRodada(Aposta):-
+vencedoresDaRodada(_,_,_,Time4,_),
+number_codes(ApostaAtom,Aposta),
+Time4 == ApostaAtom,addCaixa(600),
+write('Voce ganhou 600 pela aposta.'),nl.
+
+verificaApostaRodada(Aposta):-
+vencedoresDaRodada(_,_,_,_,Time5),
+number_codes(ApostaAtom,Aposta),
+Time5 == ApostaAtom,addCaixa(600),
+write('Voce ganhou 600 pela aposta.'),nl.
+
+verificaApostaRodada(_):-
+addCaixa(-500),
+write('Voce perdeu 500 pela aposta.'),nl.
+
+
+fazAposta(Aposta1,Aposta2):-
+	write('Deseja Apostar ? Se sim, digite o numero correspondente ao time, se nao digite qualquer outro numero.'),
+	nl,
+	write('Aposta1?: '),
+	read_line_to_string(user_input,Aposta1),
+	write('Aposta2?: '),
+	read_line_to_string(user_input,Aposta2).
+
+
+
 % Definindo fatos dinamicos
 :- dynamic grupoA/5.
 :- dynamic grupoB/5.
 :- dynamic timeDeGrupo/7.
 :- dynamic vencedoresDaRodada/5.
+:- dynamic caixaUsuario/1.
 
 main :-
 	% Realizando sorteio
@@ -313,60 +380,101 @@ main :-
 	
 	nl, write('Rodada 01:'), nl,
 	setVencedoresDaRodada(Time1,Time6,Time2,Time7,Time3,Time8,Time4,Time9,Time5,Time10),
+	
+	fazAposta(Aposta1_01,Aposta2_01),
+	verificaApostaRodada(Aposta1_01),
+	verificaApostaRodada(Aposta2_01),
+
 	imprimeGrupoA,
 	imprimeGrupoB,
 	imprimeVencedoresRodada,
 
 	nl,nl, write('Rodada 02:'), nl,
 	setVencedoresDaRodada(Time1,Time7,Time2,Time8,Time3,Time9,Time4,Time10,Time5,Time6),
+	
+	fazAposta(Aposta1_02,Aposta2_02),
+	verificaApostaRodada(Aposta1_02),
+	verificaApostaRodada(Aposta2_02),
 	imprimeGrupoA,
 	imprimeGrupoB,
 	imprimeVencedoresRodada,
 
 	nl,nl, write('Rodada 03:'), nl,
 	setVencedoresDaRodada(Time1,Time8,Time2,Time9,Time3,Time10,Time4,Time6,Time5,Time7),
+	
+	fazAposta(Aposta1_03,Aposta2_03),
+	verificaApostaRodada(Aposta1_03),
+	verificaApostaRodada(Aposta2_03),
 	imprimeGrupoA,
 	imprimeGrupoB,
 	imprimeVencedoresRodada,
 
 	nl,nl, write('Rodada 04:'), nl,
 	setVencedoresDaRodada(Time1,Time9,Time2,Time10,Time3,Time6,Time4,Time7,Time5,Time8), 
+
+	fazAposta(Aposta1_04,Aposta2_04),
+	verificaApostaRodada(Aposta1_04),
+	verificaApostaRodada(Aposta2_04),
 	imprimeGrupoA,
 	imprimeGrupoB,
 	imprimeVencedoresRodada,
 
 	nl,nl, write('Rodada 05:'), nl,
 	setVencedoresDaRodada(Time1,Time10,Time2,Time6,Time3,Time7,Time4,Time8,Time5,Time9), 
+
+	fazAposta(Aposta1_05,Aposta2_05),
+	verificaApostaRodada(Aposta1_05),
+	verificaApostaRodada(Aposta2_05),
 	imprimeGrupoA,
 	imprimeGrupoB,
 	imprimeVencedoresRodada,
 
 	nl,nl, write('Rodada 06:'), nl,
 	setVencedoresDaRodada(Time6,Time1,Time7,Time2,Time8,Time3,Time9,Time4,Time10,Time5), 
+
+	fazAposta(Aposta1_06,Aposta2_06),
+	verificaApostaRodada(Aposta1_06),
+	verificaApostaRodada(Aposta2_06),
 	imprimeGrupoA,
 	imprimeGrupoB,
 	imprimeVencedoresRodada,
 
 	nl,nl, write('Rodada 07:'), nl,
 	setVencedoresDaRodada(Time7,Time1,Time8,Time2,Time9,Time3,Time10,Time4,Time6,Time5), 
+
+	fazAposta(Aposta1_07,Aposta2_07),
+	verificaApostaRodada(Aposta1_07),
+	verificaApostaRodada(Aposta2_07),
 	imprimeGrupoA,
 	imprimeGrupoB,
 	imprimeVencedoresRodada,
 
 	nl,nl, write('Rodada 08:'), nl,
 	setVencedoresDaRodada(Time8,Time1,Time9,Time2,Time10,Time3,Time6,Time4,Time7,Time5), 
+
+	fazAposta(Aposta1_08,Aposta2_08),
+	verificaApostaRodada(Aposta1_08),
+	verificaApostaRodada(Aposta2_08),
 	imprimeGrupoA,
 	imprimeGrupoB,
 	imprimeVencedoresRodada,
 
 	nl,nl, write('Rodada 09:'), nl,
 	setVencedoresDaRodada(Time9,Time1,Time10,Time2,Time6,Time3,Time7,Time4,Time8,Time5), 
+
+	fazAposta(Aposta1_09,Aposta2_09),
+	verificaApostaRodada(Aposta1_09),
+	verificaApostaRodada(Aposta2_09),
 	imprimeGrupoA,
 	imprimeGrupoB,
 	imprimeVencedoresRodada,
 
 	nl,nl, write('Rodada 10:'), nl,
 	setVencedoresDaRodada(Time10,Time1,Time6,Time2,Time7,Time3,Time8,Time4,Time9,Time5),
+
+	fazAposta(Aposta1_10,Aposta2_10),
+	verificaApostaRodada(Aposta1_10),
+	verificaApostaRodada(Aposta2_10),
 	imprimeGrupoA,
 	imprimeGrupoB,
 	imprimeVencedoresRodada,
