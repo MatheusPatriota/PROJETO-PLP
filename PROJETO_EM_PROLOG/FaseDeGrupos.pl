@@ -128,6 +128,12 @@ getVitorias(Time,Vitorias):-
 timeDeGrupo(Time ,_,_,Vitorias,_,_,_).
 
 
+getPontosTotal(Time,PontosT):-
+getPontos(Time,Pontos),
+getGols(Time,Gols),
+GolsP is (Gols * 0.01),
+PontosT is Pontos + GolsP.
+
 getEmpates(Time,Empates):-
 timeDeGrupo(Time ,_,_,_,Empates,_,_).
 
@@ -187,7 +193,7 @@ setTimeEmpates(Time2,Pts2).
 
 
 imprimeGrupoA :-
-grupoA(Time1,Time2,Time3,Time4,Time5),
+ordenaTimes('A',[Time1,Time2,Time3,Time4,Time5]),
 write('Posicao GrupoA: Nome Pontos Partidas Vitorias Empates Derrotas Gols'),nl,
 showTime(Time1),
 showTime(Time2),
@@ -198,13 +204,37 @@ showTime(Time5).
 
 
 imprimeGrupoB :-
-grupoB(Time1,Time2,Time3,Time4,Time5),
+ordenaTimes('B',[Time1,Time2,Time3,Time4,Time5]),
 write('Posicao GrupoB: Nome Pontos Partidas Vitorias Empates Derrotas Gols'),nl,
 showTime(Time1),
 showTime(Time2),
 showTime(Time3),
 showTime(Time4),
 showTime(Time5).
+
+
+ordenaTimes('A',TimesOrdenados):-
+	grupoA(Time1,Time2,Time3,Time4,Time5),
+	getPontosTotal(Time1,Pts1),
+	getPontosTotal(Time2,Pts2),
+	getPontosTotal(Time3,Pts3),
+	getPontosTotal(Time4,Pts4),
+	getPontosTotal(Time5,Pts5),
+	Pairs = [Pts1-Time1,Pts2-Time2,Pts3-Time3,Pts4-Time4,Pts5-Time5],
+	sort(1, @>=, Pairs, ParesOrdenados),
+	pairs_values(ParesOrdenados,TimesOrdenados).
+
+
+ordenaTimes('B',TimesOrdenados):-
+	grupoB(Time1,Time2,Time3,Time4,Time5),
+	getPontosTotal(Time1,Pts1),
+	getPontosTotal(Time2,Pts2),
+	getPontosTotal(Time3,Pts3),
+	getPontosTotal(Time4,Pts4),
+	getPontosTotal(Time5,Pts5),
+	Pairs = [Pts1-Time1,Pts2-Time2,Pts3-Time3,Pts4-Time4,Pts5-Time5],
+	sort(1, @>=, Pairs, ParesOrdenados),
+	pairs_values(ParesOrdenados,TimesOrdenados).
 
 
 
