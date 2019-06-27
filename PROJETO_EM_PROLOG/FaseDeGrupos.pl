@@ -480,4 +480,7 @@ main :-
 	imprimeVencedoresRodada,
 
 	% imprimindo classificados
-nl,nl, getClassificados(A,B,C,D).
+	nl,nl, getClassificados(A,B,C,D).
+% Descomentar linha abaixo na integracao das partes, funcao que cria os times da semifinal
+%	makeTimesSF(A,B,C,D),
+%	semiFinal.

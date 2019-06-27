@@ -72,10 +72,7 @@ getCaixa(Saida):-
 
 % timeSF(NumTime,PtTime).
 
-timeSF(1,0).
-timeSF(2,0).
-timeSF(3,0).
-timeSF(4,0).
+timeSF(id,pontos).
 
 
 getPtSF(NumTime,Pts):-
@@ -103,19 +100,12 @@ getGanhadorSF(Time1,Time2,Time1):-
 getGanhadorSF(_,Time2,Time2).
 
 
-imprimeTimesSF:-
-	nl,
-	timeSF(NumTime,Pts),
-	getNome(NumTime,Nome),
-	write(Nome),write(" : "),write(Pts),nl,fail.
-
-classificadosSemi(1,2,3,4).
 
 %classificadosSemi(Time1,Time2,Time3,Time4).
 
-semifinal:-
-write("-------- Fase Semi-Final ---------"),nl,
-	classificadosSemi(Time1,Time2,Time3,Time4),
+semiFinal:-
+	write("-------- Fase Semi-Final ---------"),nl,
+	getClassificados(Time1,Time2,Time3,Time4),
 	statusSemiEfinal(Time1,Time2),
 	statusSemiEfinal(Time3,Time4),
 	write('Deseja Apostar ? Se sim, digite o numero correspondente ao time(1 ou 2), se nao digite qualquer outro numero.'),
@@ -291,10 +281,10 @@ calculoGolsForaCasa(Time,Gols):-
 	
 
 makeTimesSF(Time1,Time2,Time3,Time4):-
-assert(timeSF(Time1,0)),
-assert(timeSF(Time1,0)),
-assert(timeSF(Time1,0)),
-assert(timeSF(Time1,0)).
+	assert(timeSF(Time1,0)),
+	assert(timeSF(Time2,0)),
+	assert(timeSF(Time3,0)),
+	assert(timeSF(Time4,0)).
 
 
 padronizaString(Texto, TextoNovo, Tamanho) :- string_length(Texto, X), X == Tamanho, TextoNovo = Texto.
