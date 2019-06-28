@@ -100,7 +100,7 @@ caixa(-500).
 statusSemiEfinal(Time1,Time2):-
 getNome(Time1,Nome1),getNome(Time2,Nome2),
 nl,
-write(" 1 "),write(Nome1),write(" vs "),write(" 2 ")writenl(Nome2).
+write(" 1 "),write(Nome1),write(" vs "),write(" 2 "),writenl(Nome2).
 
 
 nl.
