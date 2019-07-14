@@ -30,4 +30,5 @@ por padrão o time da casa tem direito a 70% do estádio enquanto o visitante te
 ## Desenvolvedores
 
 - [Matheus Patriota](https://github.com/MatheusPatriota)
+- [Yuri Souza](https://github.com/yuri-s-s)
 
