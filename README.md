@@ -1,7 +1,7 @@
 # Simulador do Campeonato Paraibano de Futebol
 
 ![C++](https://img.shields.io/badge/C%2B%2B-Done-success.svg) 
-![Haskell](https://img.shields.io/badge/Haskell-Done-success.svg) 
+![Haskell](https://img.shields.io/badge/Prolog-Done-success.svg) 
 ![Prolog](https://img.shields.io/badge/Haskell-Done-success.svg) 
 
 
